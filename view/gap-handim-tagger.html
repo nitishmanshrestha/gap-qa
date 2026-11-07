@@ -514,6 +514,10 @@
       #draft {
         min-height: 260px;
       }
+      #draft p,
+      #draft div {
+        margin: 0 0 var(--space-2);
+      }
 
       input:focus-visible,
       textarea:focus-visible,
@@ -1693,7 +1697,7 @@
               a glance, naming the competencies it touches, with screenshots,
               links and metrics for the detailed artifact one click away in its
               utility belt. Tag every claim to the reasonable competencies it
-              proves, spot the gaps early, and export a polished PDF or Markdown
+              proves, spot the gaps early, and export HTML slides or Markdown
               file.
               <br /><br />Built by a QA, for fellow QAs. <br />All the best!
             </p>
@@ -1794,7 +1798,7 @@
       </header>
 
       <div class="layout">
-        <section class="card" aria-labelledby="formTitle">
+        <section class="card" id="formCard" aria-labelledby="formTitle">
           <h2 class="card-title" id="formTitle">Add an artifact</h2>
 
           <details class="form-section">
@@ -1828,7 +1832,11 @@
                 <p class="field-info">
                   Context, your contribution and the approach.
                 </p>
-                <div class="rte-toolbar" id="rteToolbar">
+                <div
+                  class="rte-toolbar"
+                  id="rteToolbar"
+                  data-editor="description"
+                >
                   <button
                     type="button"
                     class="rte-btn"
@@ -1935,10 +1943,52 @@
                   behind each ticked competency, and the outcome. Leave it blank
                   to skip.
                 </p>
-                <textarea
+                <div class="rte-toolbar" id="storyToolbar" data-editor="draft">
+                  <button
+                    type="button"
+                    class="rte-btn"
+                    data-cmd="bold"
+                    title="Bold"
+                    aria-label="Bold"
+                  >
+                    <b>B</b>
+                  </button>
+                  <button
+                    type="button"
+                    class="rte-btn"
+                    data-cmd="italic"
+                    title="Italic"
+                    aria-label="Italic"
+                  >
+                    <i>I</i>
+                  </button>
+                  <button
+                    type="button"
+                    class="rte-btn"
+                    data-cmd="insertUnorderedList"
+                    title="Bullet list"
+                    aria-label="Bullet list"
+                  >
+                    &bull; List
+                  </button>
+                  <button
+                    type="button"
+                    class="rte-btn"
+                    data-cmd="link"
+                    title="Insert link"
+                    aria-label="Insert link"
+                  >
+                    Link
+                  </button>
+                </div>
+                <div
+                  class="rte-editor"
                   id="draft"
-                  placeholder="Example: Built a harnessed agentic test appetizer for Playwright that turns Jira tickets and test documents into UI automation tests. Test Automation: I refined the requirements, specified strong locators, and had the LLM create tests that the harness validates. Ownership: I drove the build to a working blueprint. Leadership &amp; Mentorship: I published it so other QAs can reuse it as boilerplate and start or extend agentic test automation of their own."
-                ></textarea>
+                  contenteditable="true"
+                  role="textbox"
+                  aria-multiline="true"
+                  data-placeholder="Auto-drafted from the fields above. Edit it freely; your wording and formatting are kept."
+                ></div>
               </div>
             </div>
           </details>
@@ -2178,6 +2228,7 @@
           </details>
 
           <p class="error" id="formError" role="alert"></p>
+          <p class="hint" id="autosaveNote" aria-live="polite"></p>
 
           <div class="actions">
             <button type="button" class="btn btn-ghost" id="clearBtn">
@@ -2202,6 +2253,16 @@
             <h2 class="card-title" id="coverageTitle">Coverage</h2>
             <p class="summary" id="coverageSummary"></p>
             <div class="coverage-grid" id="coverageGrid"></div>
+            <div class="data-actions">
+              <button
+                type="button"
+                class="btn btn-ghost"
+                id="deckOpenBtn"
+                hidden
+              >
+                Open last slides
+              </button>
+            </div>
           </section>
 
           <section class="card" aria-labelledby="claimsTitle">
@@ -2210,6 +2271,9 @@
                 Saved artifacts (<span id="claimCount">0</span>)
               </h2>
               <span class="data-actions">
+                <button type="button" class="btn btn-ghost" id="deckBtn">
+                  Export HTML slides
+                </button>
                 <button type="button" class="btn btn-ghost" id="pdfBtn">
                   Export PDF
                 </button>
@@ -2331,7 +2395,7 @@
             <h3>Review</h3>
             <p>
               Edit or delete artifacts. Drag the grip on an artifact to reorder
-              it: the order sets the PDF numbers. Edited the JSON by hand?
+              it: the order sets the artifact numbers. Edited the JSON by hand?
               Switch back to this tab to reload it.
             </p>
           </div>
@@ -2341,10 +2405,12 @@
           <div>
             <h3>Export</h3>
             <p>
-              <strong>Export PDF</strong> or
-              <strong>Export Markdown</strong> opens a save dialog in your
-              file's folder. Both use all ready artifacts for the current level.
-              Agent drafts are excluded until you edit them and save here.
+              <strong>Export HTML slides</strong> saves a folder with the slides
+              (index.html, styles.css, data.json and images) named after you,
+              your level and the time. <strong>Export Markdown</strong> opens a
+              save dialog in your file's folder. Both use all ready artifacts
+              for the current level. Agent drafts are excluded until you edit
+              them and save here.
             </p>
             <button type="button" class="btn howto-cta" id="howtoStart">
               Start tagging
@@ -2404,7 +2470,7 @@
             <p>Enter the candidate name.</p>
           </details>
           <details>
-            <summary>Export PDF downloads a file</summary>
+            <summary>Export Markdown downloads a file</summary>
             <p>
               The save dialog could not open. Find the file in your Downloads
               folder.
@@ -2470,6 +2536,22 @@
         { code: "LRN", name: "Learning & Innovation" },
         { code: "CID", name: "CI/CD and DevOps" },
       ];
+
+      // Hint shown on hover; what kind of work counts toward each competency.
+      const COMPETENCY_DEFS = {
+        OWN: "Driving work end to end: taking it from start to finish, following it up to sign-off and keeping it working afterwards.",
+        PSC: "Analysing a problem, finding the root cause and choosing a sound solution, including when requirements are unclear.",
+        COM: "Working with others: clear updates, aligning squads and stakeholders, and getting buy-in.",
+        AUT: "Building or extending automated tests and frameworks, such as Playwright suites or agentic test tooling.",
+        LDR: "Guiding others: mentoring, coaching, delegating and setting direction for a team or squad.",
+        TPS: "Planning how testing will be done: strategy, scope, risk-based coverage and test plans for a release.",
+        BUG: "Finding, reporting and analysing defects: clear reproduction steps, root-cause analysis and triage.",
+        DOM: "Understanding the business: business rules, user journeys, regulations and acceptance criteria.",
+        TLS: "Using and setting up tools and frameworks: CI tools, test runners, dashboards and utilities.",
+        TST: "Core testing craft: test design, exploratory and regression testing, boundaries and coverage.",
+        LRN: "Learning new skills or techniques and bringing them into the team, such as trying a new tool or building a prototype.",
+        CID: "Pipelines and delivery: CI/CD jobs, build and release automation, environments and DevOps practices.",
+      };
 
       // Colour encodes the tier at the selected level: critical red, important yellow, supporting blue.
       const TIER_BASE = {
@@ -2550,6 +2632,7 @@
         draftEdited: false,
         expandedClaims: new Set(),
         editingId: null,
+        deckUrl: "",
       };
 
       const $ = (id) => document.getElementById(id);
@@ -2641,9 +2724,17 @@
         return htmlToText(html) ? html : "";
       }
 
-      let rteRange = null;
+      function getStoryHtml() {
+        const html = sanitizeHtml($("draft").innerHTML);
+        return htmlToText(html) ? html : "";
+      }
 
-      function openRteLink() {
+      let rteRange = null;
+      let rteTarget = "description";
+
+      function openRteLink(target) {
+        rteTarget = target;
+        $(target).after($("rteLinkRow"));
         const selection = window.getSelection();
         rteRange = selection.rangeCount
           ? selection.getRangeAt(0).cloneRange()
@@ -2656,7 +2747,7 @@
       function closeRteLink() {
         $("rteLinkRow").hidden = true;
         rteRange = null;
-        $("description").focus();
+        $(rteTarget).focus();
       }
 
       function applyRteLink() {
@@ -2665,7 +2756,7 @@
           showFormError("Links must start with http:// or https://.");
           return;
         }
-        $("description").focus();
+        $(rteTarget).focus();
         const selection = window.getSelection();
         if (rteRange) {
           selection.removeAllRanges();
@@ -2851,7 +2942,7 @@
         ${COMPETENCIES.filter((c) => tierOf(c.code) === tier.key)
           .map(
             (c) => `
-          <label class="comp-option" style="${compVars(c.code)}">
+          <label class="comp-option" style="${compVars(c.code)}" title="${esc(COMPETENCY_DEFS[c.code] || "")}">
             <input type="checkbox" name="competency" value="${esc(c.code)}"${checked.has(c.code) ? " checked" : ""}>
             <i class="dot"></i><span>${esc(c.name)}</span>
           </label>`,
@@ -2875,10 +2966,11 @@
       function updateDraft() {
         if (state.draftEdited) return;
         const input = storyInputFromForm();
-        $("draft").value =
+        $("draft").innerHTML = sanitizeHtml(
           input.point.trim() && input.competencies.length
             ? buildStory(input)
-            : "";
+            : "",
+        );
       }
 
       // Trigger words per competency, drawn from the knowledge base (S05, S11, S12). Hints only: the user decides.
@@ -3186,6 +3278,7 @@
         input.value = "";
         $("linkLabel").value = "";
         renderLinks();
+        scheduleAutosave();
       }
 
       function renderLinks() {
@@ -3215,6 +3308,7 @@
         state.flow.push(step);
         input.value = "";
         renderFlowForm();
+        scheduleAutosave();
       }
 
       function flowSvg(steps) {
@@ -3305,6 +3399,7 @@
           }
         }
         renderImages();
+        scheduleAutosave();
       }
 
       function renderImages() {
@@ -3544,7 +3639,7 @@
           <button type="button" class="btn btn-ghost btn-small claim-toggle" data-toggle-claim="${esc(claim.id)}" aria-expanded="${expanded}">
             ${expanded ? "Hide description" : "Show description"}
           </button>
-          <div class="claim-description" ${expanded ? "" : "hidden"}>${claim.claim ? `<dl class="impact-list"><dt>Claim story</dt><dd>${esc(claim.claim)}</dd></dl>` : ""}${claim.description ? sanitizeHtml(claim.description) : ""}</div>`
+          <div class="claim-description" ${expanded ? "" : "hidden"}>${claim.claim ? `<dl class="impact-list"><dt>Claim story</dt><dd>${sanitizeHtml(claim.claim)}</dd></dl>` : ""}${claim.description ? sanitizeHtml(claim.description) : ""}</div>`
             : ""
         }
         ${claim.links.length ? `<div class="link-list">${claim.links.map(renderLinkAnchor).join("")}</div>` : ""}
@@ -3576,7 +3671,10 @@
         state.images = [];
         $("linkInput").value = "";
         $("linkLabel").value = "";
-        $("draft").value = "";
+        $("draft").innerHTML = "";
+        $("autosaveNote").textContent = "";
+        clearTimeout(autosaveTimer);
+        autosaveDirty = false;
         fillEvidenceFields();
         showFormError("");
         showNote(
@@ -3598,7 +3696,73 @@
         $("saveBtn").textContent = id ? "Update artifact" : "Save artifact";
       }
 
+      let autosaveTimer;
+      let autosaveDirty = false;
+      let autosavePending = Promise.resolve();
+
+      function scheduleAutosave() {
+        autosaveDirty = true;
+        clearTimeout(autosaveTimer);
+        autosaveTimer = setTimeout(() => {
+          autosavePending = autosave();
+        }, 800);
+      }
+
+      // Saves the form as it is: new artifacts and drafts stay drafts, ready artifacts stay ready only while complete.
+      async function autosave() {
+        autosaveDirty = false;
+        const point = $("point").value.trim();
+        if (!state.dataFile || !point) return;
+        if (state.busy) {
+          scheduleAutosave();
+          return;
+        }
+        const existing = state.claims.find((c) => c.id === state.editingId);
+        const description = getDescriptionHtml();
+        const codes = getSelectedCodes();
+        const problem = $("problem").value.trim();
+        const keepReady = existing && !isDraft(existing);
+        if (
+          keepReady &&
+          (!problem || !htmlToText(description).trim() || !codes.length)
+        ) {
+          $("autosaveNote").textContent =
+            "Not autosaved: this artifact is saved as ready, so it needs a problem, description and competency. Fix it, or press Update artifact.";
+          return;
+        }
+        const id = existing ? existing.id : Date.now().toString(36);
+        const saved = {
+          id,
+          point,
+          description,
+          competencies: codes,
+          claim: getStoryHtml(),
+          links: [...state.links],
+          images: [...state.images],
+          flow: [...state.flow],
+          ...readEvidenceFields(),
+          status: keepReady ? "ready" : "draft",
+          level: state.level,
+          createdAt: existing?.createdAt || new Date().toISOString(),
+        };
+        const next = existing
+          ? state.claims.map((c) => (c.id === id ? { ...c, ...saved } : c))
+          : [saved, ...state.claims];
+        try {
+          await commitClaims(next);
+          state.editingId = id;
+          $("autosaveNote").textContent = keepReady
+            ? `Changes autosaved at ${new Date().toLocaleTimeString([], { hour: "2-digit", minute: "2-digit" })}.`
+            : `Autosaved as a draft at ${new Date().toLocaleTimeString([], { hour: "2-digit", minute: "2-digit" })}. Press Save artifact to finish it.`;
+        } catch (error) {
+          $("autosaveNote").textContent = `Not autosaved: ${error.message}`;
+        }
+      }
+
       async function saveClaim() {
+        clearTimeout(autosaveTimer);
+        autosaveDirty = false;
+        await autosavePending;
         if ($("linkInput").value.trim()) addLink();
         // Link text without a URL is dropped.
 
@@ -3606,7 +3770,7 @@
         const problem = $("problem").value.trim();
         const description = getDescriptionHtml();
         const codes = getSelectedCodes();
-        const draft = $("draft").value.trim();
+        const draft = getStoryHtml();
         const errors = [];
         if (!point) errors.push("Name the artifact.");
         if (!problem) errors.push("Describe the problem it solved.");
@@ -3662,21 +3826,26 @@
           });
         fillEvidenceFields(claim);
         state.links = claim.links.map(asLink);
-        state.images = [...(claim.images || [])];
+        // Drops file-path entries left by exports; they cannot be displayed and block the 6-image cap.
+        state.images = (claim.images || []).filter((src) =>
+          SAFE_IMAGE.test(src),
+        );
         state.flow = (claim.flow || []).map(String);
         $("linkInput").value = "";
         $("linkLabel").value = "";
-        $("draft").value = claim.claim;
+        $("draft").innerHTML = sanitizeHtml(claim.claim || "");
         showFormError("");
         setDraftEdited(
-          claim.claim !==
-            buildStory({
-              point: claim.point,
-              problem: claim.problem,
-              description: claim.description,
-              consequence: claim.consequence,
-              competencies: claim.competencies,
-            }),
+          htmlToText(claim.claim || "") !==
+            htmlToText(
+              buildStory({
+                point: claim.point,
+                problem: claim.problem,
+                description: claim.description,
+                consequence: claim.consequence,
+                competencies: claim.competencies,
+              }),
+            ),
         );
         setEditing(id);
         openFormSections();
@@ -3747,7 +3916,7 @@
           .map(({ url, label }) => (label ? `[${label}](${url})` : url))
           .join(", ");
         const fields = [
-          ["Claim story", claim.claim],
+          ["Claim story", htmlToText(claim.claim || "")],
           ["Competencies", claim.competencies.map(nameOf).join(", ")],
           ...impactRows(claim),
           ["Links", links],
@@ -3808,12 +3977,16 @@
         );
       }
 
-      function exportFileName(extension) {
+      function candidateSlug() {
         const slug = (state.candidate.name || "candidate")
           .toLowerCase()
           .replace(/[^a-z0-9]+/g, "-")
           .replace(/^-+|-+$/g, "");
-        return `${slug || "candidate"}-${state.level.toLowerCase()}-evidence.${extension}`;
+        return slug || "candidate";
+      }
+
+      function exportFileName(extension) {
+        return `${candidateSlug()}-${state.level.toLowerCase()}-evidence.${extension}`;
       }
 
       async function saveExport(blob, fileName, description, mime, extension) {
@@ -3851,6 +4024,270 @@
           "Markdown",
           "text/markdown",
           ".md",
+        );
+      }
+
+      // ---- HTML deck export: index.html + styles.css + data.json + images/ ----
+
+      const DECK_CSS = `:root{--bg:#f3ecdd;--surface:#fffdf7;--surface-alt:#f8f2e5;--border:#e5d9c2;--text:#141413;--muted:#73726c;--primary:#c6613f;--primary-soft:#f8e9e1;--font:Figtree,"Segoe UI",system-ui,sans-serif;--serif:Newsreader,Georgia,"Times New Roman",serif}
+*{box-sizing:border-box;margin:0;padding:0}
+html,body{height:100%;background:var(--bg);color:var(--text);font-family:var(--font)}
+body{display:grid;place-items:center;overflow:hidden}
+.stage{container-type:size;width:min(100vw,calc(100vh * 16 / 9));aspect-ratio:16/9;background:var(--surface);position:relative;box-shadow:0 12px 40px rgba(86,60,30,.14);overflow:hidden}
+.slide{position:absolute;inset:0;padding:5cqw;display:flex;flex-direction:column;gap:2cqw}
+.slide[hidden]{display:none}
+.kicker{display:flex;align-items:center;gap:.7cqw;font-size:1.05cqw;font-weight:600;letter-spacing:.14em;text-transform:uppercase;color:var(--muted)}
+.kicker::before{content:"";width:.5cqw;height:.5cqw;border-radius:50%;background:var(--primary)}
+h1,h2{font-family:var(--serif);font-weight:700}
+h1{font-size:5.7cqw;line-height:1.05}
+h2{font-size:2.6cqw;line-height:1.2}
+.rule{width:5cqw;height:.35cqw;background:var(--primary);border-radius:1cqw}
+.s-title{justify-content:flex-start;padding-top:12cqw;gap:2.4cqw}
+.s-title .meta{font-size:1.52cqw;color:var(--muted);display:flex;gap:2.4cqw;flex-wrap:wrap}
+.s-title .meta b{color:var(--text);font-weight:600}
+.stats{display:grid;grid-template-columns:repeat(4,1fr);gap:1.6cqw}
+.stat{border:1px solid var(--border);border-top:.25cqw solid var(--primary);background:var(--surface);border-radius:1.2cqw;padding:1.5cqw 1.8cqw;box-shadow:0 .2cqw .8cqw rgba(86,60,30,.06)}
+.stat b{display:block;font:700 3.2cqw/1.1 var(--serif);font-variant-numeric:lining-nums}
+.stat span{display:block;margin-top:.4cqw;font-size:.97cqw;font-weight:600;letter-spacing:.08em;text-transform:uppercase;color:var(--muted)}
+.toc{list-style:none;display:grid;grid-template-columns:minmax(0,1fr);align-content:start;flex:1;min-height:0;overflow:auto}
+.toc li{min-width:0}
+.toc button{display:flex;align-items:baseline;gap:1.2cqw;width:100%;text-align:left;background:none;border:0;border-bottom:1px solid var(--border);padding:.55cqw .4cqw;font:inherit;font-size:1.2cqw;color:var(--text);cursor:pointer}
+.toc button:hover{background:var(--surface-alt)}
+.toc button:focus-visible{outline:3px solid var(--primary-soft);border-color:var(--primary)}
+.toc .no{color:var(--primary);font-weight:700;min-width:2cqw}
+.toc .t{flex:1;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.toc .more{padding:.55cqw .4cqw;color:var(--muted);font-size:1.1cqw}.cols{display:grid;grid-template-columns:1.7fr 1fr;gap:4cqw;flex:1;min-height:0}
+.col{display:flex;flex-direction:column;gap:1.1cqw;min-height:0;overflow:auto}
+.col>*{flex:none}
+.point{margin-top:-.9cqw;font-size:2cqw;line-height:1.2;padding-bottom:.8cqw;border-bottom:1px solid var(--border)}
+.tags{display:flex;flex-wrap:wrap;gap:.7cqw}
+.tag{display:inline-flex;align-items:center;gap:.5cqw;border:1px solid var(--c-bd,var(--border));background:var(--c-bg,var(--surface-alt));color:var(--c-tx,var(--text));border-radius:99cqw;padding:.3cqw .8cqw;font-size:.82cqw;font-weight:600}
+.tag .dot{width:.55cqw;height:.55cqw;border-radius:50%;background:var(--c-solid)}
+.links{display:flex;flex-wrap:wrap;align-items:center;gap:.5cqw 1.8cqw;font-size:1.05cqw}
+.links a{display:flex;align-items:baseline;gap:.6cqw;color:var(--primary);overflow-wrap:anywhere}
+.links a::before,.prose a::before{content:"";display:inline-block;flex:none;width:1em;height:1em;margin-right:.3em;vertical-align:-.12em;background:currentColor;-webkit-mask:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='black' stroke-width='2' stroke-linecap='round'%3E%3Cpath d='M10 13a5 5 0 0 0 7.07 0l3-3a5 5 0 0 0-7.07-7.07l-1.7 1.7M14 11a5 5 0 0 0-7.07 0l-3 3a5 5 0 0 0 7.07 7.07l1.7-1.7'/%3E%3C/svg%3E") center/contain no-repeat;mask:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='black' stroke-width='2' stroke-linecap='round'%3E%3Cpath d='M10 13a5 5 0 0 0 7.07 0l3-3a5 5 0 0 0-7.07-7.07l-1.7 1.7M14 11a5 5 0 0 0-7.07 0l-3 3a5 5 0 0 0 7.07 7.07l1.7-1.7'/%3E%3C/svg%3E") center/contain no-repeat}
+.figure{display:grid;grid-template-columns:1fr auto 1fr;align-items:stretch;gap:.8cqw;padding:.8cqw 1.1cqw;background:var(--surface-alt);border:1px solid var(--border);border-radius:1.2cqw}
+.figure>div{min-width:0;display:flex;flex-direction:column;gap:.3cqw}.figure b{display:block;font:700 1.5cqw/1.25 var(--serif);overflow-wrap:break-word}
+.figure span{font-size:1.045cqw;color:var(--muted);text-transform:uppercase;letter-spacing:.1em;font-weight:600}
+.figure .arrow{align-self:center;font-style:normal;font-size:2.28cqw;color:var(--primary)}
+.rows{display:grid;grid-template-columns:max-content 1fr;gap:0 2cqw;font-size:1.1cqw;line-height:1.4;overflow:auto}
+.rows dt,.rows dd{padding:.6cqw 0;border-bottom:1px solid var(--border)}
+.rows dt{color:var(--muted);font-weight:600}
+.prose{font-size:1.25cqw;line-height:1.5;max-width:none;margin-top:.6cqw}
+.prose ul,.prose ol{padding-left:1.8cqw;margin:.4cqw 0}
+.lbl{display:flex;align-items:center;gap:.6cqw;font-size:.97cqw;font-weight:600;letter-spacing:.12em;text-transform:uppercase;color:var(--muted)}
+.lbl::before{content:"";width:.9cqw;height:.18cqw;border-radius:1cqw;background:var(--primary)}
+.prose .lbl{margin-bottom:.5cqw}
+.prose a{color:var(--primary)}
+.flow{display:flex;flex-wrap:wrap;align-items:center;gap:.6cqw;font-size:1cqw}
+.flow span{border:1px solid var(--border);background:var(--surface-alt);border-radius:.7cqw;padding:.35cqw .8cqw}
+.flow i{font-style:normal;color:var(--primary)}
+.shots{flex:none;display:flex;flex-direction:column;gap:.6cqw}
+.grid-shots{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:1.6cqw}
+.grid-shots .thumb{position:relative;left:auto;top:auto;z-index:auto;width:100%;height:auto;aspect-ratio:16/10;box-shadow:none}
+.grid-shots .thumb img{object-fit:contain;background:var(--surface)}
+.thumbs{position:relative;width:14cqw;height:7.4cqw}
+.thumb{position:absolute;left:calc(var(--i)*2.4cqw);top:calc(var(--i)*.8cqw);z-index:var(--i);width:8cqw;height:5cqw;padding:0;border:1px solid var(--border);border-radius:.6cqw;background:var(--surface-alt);overflow:hidden;cursor:zoom-in;box-shadow:0 .2cqw .6cqw rgba(86,60,30,.12)}
+.thumb img{width:100%;height:100%;object-fit:cover;display:block}
+.thumb:hover{border-color:var(--primary)}
+.thumb:focus-visible,.z-arrow:focus-visible,.nav button:focus-visible{outline:3px solid var(--primary-soft);border-color:var(--primary)}
+.nav{position:absolute;right:2cqw;bottom:1.4cqw;display:flex;gap:.8cqw;align-items:center;font-size:1.092cqw;color:var(--muted)}
+.count{position:absolute;right:2cqw;top:1.4cqw;font-size:1.092cqw;color:var(--muted)}
+.nav button{border:1px solid var(--border);background:var(--surface);border-radius:.8cqw;padding:.35cqw 1cqw;font:inherit;color:var(--text);cursor:pointer}
+.bar{position:absolute;left:0;bottom:0;height:.35cqw;background:var(--primary);transition:width .2s}
+.zoom{position:fixed;inset:0;background:rgba(20,20,19,.92);display:grid;place-items:center;z-index:9;cursor:zoom-out}
+.zoom[hidden]{display:none}.zoom:not([hidden]){animation:zfade .25s ease}@keyframes zfade{from{opacity:0}to{opacity:1}}@keyframes zswap{from{opacity:0;transform:scale(.98)}to{opacity:1;transform:none}}@media (prefers-reduced-motion:reduce){.zoom,.zoom img{animation:none!important}}
+.zoom img{max-width:88vw;max-height:90vh}.zoom img.swap{animation:zswap .3s ease}
+.z-arrow{position:absolute;top:50%;transform:translateY(-50%);width:48px;height:48px;border-radius:50%;border:0;background:rgba(255,253,247,.95);font-size:26.6px;line-height:1;cursor:pointer}
+.z-arrow[data-z=prev]{left:2vw}
+.z-arrow[data-z=next]{right:2vw}
+.z-count{position:absolute;bottom:2vh;left:0;right:0;text-align:center;color:#fff;font-size:13.3px}
+.zoom.one .z-arrow,.zoom.one .z-count{display:none}
+@page{size:297mm 167mm;margin:0}
+@page{size:landscape;margin:0}@media print{body{display:block;overflow:visible;height:auto;background:#fff}.stage{container-type:inline-size;width:100%;height:auto;aspect-ratio:auto;box-shadow:none;overflow:visible}.slide,.slide[hidden]{position:relative;display:flex;aspect-ratio:16/9;break-after:page;overflow:hidden}.nav,.count,.bar,.zoom,.z-arrow{display:none}}`;
+
+      const DECK_JS = `(function(){var slides=[].slice.call(document.querySelectorAll('.slide')),i=0,bar=document.getElementById('bar'),count=document.getElementById('count'),zoom=document.getElementById('zoom'),zimg=zoom.querySelector('img'),zcount=document.getElementById('zcount'),zs=[],zi=0;
+function go(n){i=Math.max(0,Math.min(slides.length-1,n));slides.forEach(function(s,k){s.hidden=k!==i});bar.style.width=((i+1)/slides.length*100)+'%';count.textContent=(i+1)+' / '+slides.length;try{location.hash=String(i+1)}catch(e){}}
+function closeZoom(){zoom.hidden=true}
+document.getElementById('prev').onclick=function(){go(i-1)};
+document.getElementById('next').onclick=function(){go(i+1)};
+document.getElementById('toc').onclick=function(){go(1)};
+document.addEventListener('keydown',function(e){var k=e.key;if(!zoom.hidden){if(k==='ArrowRight')zshow(zi+1);else if(k==='ArrowLeft')zshow(zi-1);else if(k==='Escape')closeZoom();return}if(k==='ArrowRight'||k==='PageDown'||k===' '){e.preventDefault();go(i+1)}else if(k==='ArrowLeft'||k==='PageUp'){go(i-1)}else if(k==='Home'){go(0)}else if(k==='End'){go(slides.length-1)}});
+function zshow(n){zi=(n+zs.length)%zs.length;zimg.classList.remove('swap');void zimg.offsetWidth;zimg.classList.add('swap');zimg.src=zs[zi].src;zimg.alt=zs[zi].alt;zcount.textContent=(zi+1)+' / '+zs.length;zoom.classList.toggle('one',zs.length<2)}
+document.addEventListener('click',function(e){var g=e.target.closest('[data-go]');if(g){go(parseInt(g.getAttribute('data-go'),10));return}var z=e.target.closest('[data-z]');if(z){zshow(zi+(z.getAttribute('data-z')==='prev'?-1:1));return}var t=e.target.closest('.thumb');if(t){var all=[].slice.call(t.parentNode.querySelectorAll('.thumb'));zs=all.map(function(b){var m=b.querySelector('img');return{src:m.src,alt:m.alt}});zshow(all.indexOf(t));zoom.hidden=false}else if(zoom.contains(e.target)){closeZoom()}});
+go((parseInt(location.hash.slice(1),10)||1)-1);})();`;
+
+      const DECK_MONTHS = [
+        "jan",
+        "feb",
+        "mar",
+        "apr",
+        "may",
+        "jun",
+        "jul",
+        "aug",
+        "sep",
+        "oct",
+        "nov",
+        "dec",
+      ];
+
+      // Folder name: name_level_month_day_hhmm.
+      function deckFolderName(date = new Date()) {
+        const two = (n) => String(n).padStart(2, "0");
+        return `${candidateSlug()}_${state.level.toLowerCase()}_${DECK_MONTHS[date.getMonth()]}_${two(date.getDate())}_${two(date.getHours())}${two(date.getMinutes())}`;
+      }
+
+      function dataUrlImage(url) {
+        if (!SAFE_IMAGE.test(url)) return null;
+        const comma = url.indexOf(",");
+        const kind = url.slice(11, url.indexOf(";"));
+        const binary = atob(url.slice(comma + 1));
+        const bytes = new Uint8Array(binary.length);
+        for (let i = 0; i < binary.length; i++) bytes[i] = binary.charCodeAt(i);
+        return { ext: kind === "jpeg" ? "jpg" : kind, bytes };
+      }
+
+      // shots maps claim id to relative image paths already written to images/.
+      function deckHtml(claims, shots) {
+        const { name, project } = state.candidate;
+        const now = new Date();
+        const tag = (code) =>
+          `<span class="tag" style="${compVars(code)}"><i class="dot"></i>${esc(nameOf(code))}</span>`;
+        const covered = (code) =>
+          claims.filter((claim) => claim.competencies.includes(code)).length;
+        const backed = claims.filter(
+          (claim) => claim.links.length || (claim.images || []).length,
+        ).length;
+        const total = COMPETENCIES.length;
+        const touched = COMPETENCIES.filter((c) => covered(c.code)).length;
+        const critical = COMPETENCIES.filter(
+          (c) => tierOf(c.code) === "critical",
+        );
+        const criticalDone = critical.filter((c) => covered(c.code)).length;
+        const persona =
+          LEVELS.find((l) => l.code === state.level)?.persona || "";
+
+        const slides = [];
+        slides.push(`<section class="slide s-title">
+  <span class="kicker">Promotion evidence</span>
+  <div class="rule"></div>
+  <h1>${esc(name || "Candidate")}</h1>
+  <p class="meta"><span>Level <b>${esc(state.level)}</b>${persona ? ` · ${esc(persona)}` : ""}</span>${project ? `<span>Project <b>${esc(project)}</b></span>` : ""}<span>${esc(now.toLocaleString("en", { month: "long", year: "numeric" }))}</span></p>
+</section>`);
+
+        const TOC_LIMIT = 10;
+        const tocRows = [];
+        slides.push(`<section class="slide">
+  <span class="kicker">Overview</span>
+  <h2>Contents</h2>
+  <div class="stats">
+    <div class="stat"><b>${claims.length}</b><span>Artifacts</span></div>
+    <div class="stat"><b>${touched}/${total}</b><span>Competencies touched</span></div>
+    <div class="stat"><b>${critical.length ? `${criticalDone}/${critical.length}` : "n/a"}</b><span>Critical competencies covered</span></div>
+    <div class="stat"><b>${backed}/${claims.length}</b><span>Artifacts with proof attached</span></div>
+  </div>
+  <ol class="toc">@@TOC@@</ol>
+</section>`);
+
+        claims.forEach((claim, index) => {
+          const number = index + 1;
+          if (index < TOC_LIMIT) {
+            tocRows.push(
+              `<li><button type="button" data-go="${slides.length}"><span class="no">${number}</span><span class="t">${esc(claim.point)}</span></button></li>`,
+            );
+          }
+          const label = `Artifact ${number} of ${claims.length}`;
+          const done = monthLabel(claim.doneOn);
+          const links = claim.links
+            .map(asLink)
+            .filter((link) => /^https?:\/\//i.test(link.url))
+            .map(
+              (link) =>
+                `<a href="${esc(link.url)}" target="_blank" rel="noopener noreferrer">${esc(link.label || link.url)}</a>`,
+            )
+            .join("");
+          const rows = impactRows(claim).filter(
+            ([key]) => key !== "Baseline → after" && key !== "Proof strength",
+          );
+          const figure =
+            claim.before || claim.after
+              ? `<div class="figure"><div><span>Before</span><b>${esc(claim.before || "?")}</b></div><i class="arrow">→</i><div><span>After</span><b>${esc(claim.after || "?")}</b></div></div>`
+              : "";
+          const steps = (claim.flow || []).map(String);
+          const images = shots[claim.id] || [];
+          slides.push(`<section class="slide">
+  <span class="kicker">${esc(label)}${done ? ` · ${esc(done)}` : ""}</span>
+  <h2 class="point">${esc(claim.point)}</h2>
+  <div class="cols">
+    <div class="col">
+      <div class="tags">${claim.competencies.map(tag).join("")}</div>
+      ${links ? `<div class="links">${links}</div>` : ""}
+      ${claim.description ? `<div class="prose"><div class="lbl">Description</div>${sanitizeHtml(claim.description)}</div>` : ""}
+    </div>
+    <div class="col">
+      ${figure}
+      ${rows.length ? `<dl class="rows">${rows.map(([key, value]) => `<dt>${esc(key)}</dt><dd>${esc(value)}</dd>`).join("")}</dl>` : ""}
+      ${steps.length ? `<div class="flow">${steps.map((s) => `<span>${esc(s)}</span>`).join("<i>→</i>")}</div>` : ""}
+    </div>
+  </div>
+</section>`);
+          if (images.length) {
+            slides.push(`<section class="slide">
+  <span class="kicker">${esc(label)} · Evidence</span>
+  <h2 class="point">${esc(claim.point)}</h2>
+  <div class="shots"><div class="lbl">Screenshots (${images.length}) · click to open</div><div class="grid-shots">${images.map((src, k) => `<button type="button" class="thumb"${k > 5 ? " hidden" : ""} aria-label="Open screenshot ${k + 1} of ${images.length}"><img src="${esc(src)}" alt="Screenshot ${k + 1} for artifact ${number}" loading="lazy"></button>`).join("")}</div></div>
+</section>`);
+          }
+        });
+
+        slides.push(`<section class="slide s-title">
+  <span class="kicker">Questions welcome</span>
+  <div class="rule"></div>
+  <h1>Thank you</h1>
+  <p class="meta"><span>${esc(name || "Candidate")}</span></p>
+</section>`);
+
+        return `<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>${esc(name || "Candidate")} - ${esc(state.level)} promotion evidence</title>
+<link rel="stylesheet" href="styles.css">
+</head>
+<body>
+<main class="stage">
+${slides.join("\n").replace("@@TOC@@", () => tocRows.join("") + (claims.length > TOC_LIMIT ? `<li class="more">and ${claims.length - TOC_LIMIT} more artifacts</li>` : ""))}
+<span class="count" id="count" aria-live="polite"></span><nav class="nav" aria-label="Slides"><button type="button" id="toc" aria-label="Back to contents">Contents</button><button type="button" id="prev" aria-label="Previous slide">&lt;</button><button type="button" id="next" aria-label="Next slide">&gt;</button></nav>
+<div class="bar" id="bar"></div>
+</main>
+<div class="zoom" id="zoom" hidden><button type="button" class="z-arrow" data-z="prev" aria-label="Previous screenshot">&#8249;</button><img alt=""><button type="button" class="z-arrow" data-z="next" aria-label="Next screenshot">&#8250;</button><span class="z-count" id="zcount"></span></div>
+<script>${DECK_JS}<\/script>
+</body>
+</html>
+`;
+      }
+
+      async function writeDirFile(dir, fileName, data) {
+        const handle = await dir.getFileHandle(fileName, { create: true });
+        const writable = await handle.createWritable();
+        await writable.write(data);
+        await writable.close();
+      }
+
+      function deckPreviewHtml(claims) {
+        return deckHtml(
+          claims,
+          Object.fromEntries(
+            claims.map((c) => [
+              c.id,
+              (c.images || []).filter((src) => SAFE_IMAGE.test(src)),
+            ]),
+          ),
+        ).replace(
+          '<link rel="stylesheet" href="styles.css">',
+          () => `<style>${DECK_CSS}</style>`,
         );
       }
 
@@ -3905,6 +4342,78 @@
           i += 2 + ((bytes[i + 2] << 8) | bytes[i + 3]);
         }
         return null;
+      }
+
+      async function exportDeck() {
+        const claims = readyClaims();
+        if (!claims.length) {
+          showToast(`No ${state.level} artifacts to export yet`);
+          return;
+        }
+        if (!window.showDirectoryPicker) {
+          showToast(
+            "This browser cannot save folders. Use Edge or Chrome.",
+            true,
+          );
+          return;
+        }
+        try {
+          const parent = await window.showDirectoryPicker({
+            mode: "readwrite",
+            ...(state.dataFile ? { startIn: state.dataFile } : {}),
+          });
+          const folder = deckFolderName();
+          const dir = await parent.getDirectoryHandle(folder, { create: true });
+          const shots = {};
+          const files = [];
+          const snapshot = claims.map((claim, index) => {
+            const paths = [];
+            (claim.images || []).forEach((url, k) => {
+              const image = dataUrlImage(url);
+              if (!image) return;
+              const path = `images/a${index + 1}-${k + 1}.${image.ext}`;
+              files.push([path, image.bytes]);
+              paths.push(path);
+            });
+            shots[claim.id] = paths;
+            return claim;
+          });
+          if (files.length)
+            await dir.getDirectoryHandle("images", { create: true });
+          for (const [path, bytes] of files) {
+            const imageDir = await dir.getDirectoryHandle("images");
+            await writeDirFile(imageDir, path.slice(7), bytes);
+          }
+          await writeDirFile(dir, "styles.css", DECK_CSS);
+          await writeDirFile(dir, "index.html", deckHtml(claims, shots));
+          await writeDirFile(
+            dir,
+            "data.json",
+            JSON.stringify(
+              {
+                version: 1,
+                candidate: state.candidate,
+                level: state.level,
+                exportedAt: new Date().toISOString(),
+                claims: snapshot,
+              },
+              null,
+              2,
+            ),
+          );
+          showToast(`Saved HTML slides ${folder}`);
+          const preview = deckPreviewHtml(claims);
+          if (state.deckUrl) URL.revokeObjectURL(state.deckUrl);
+          state.deckUrl = URL.createObjectURL(
+            new Blob([preview], { type: "text/html" }),
+          );
+          $("deckOpenBtn").hidden = false;
+          // A popup blocker may refuse this after the folder picker; the button opens it instead.
+          window.open(state.deckUrl, "_blank");
+        } catch (error) {
+          if (error.name === "AbortError") return;
+          showToast(`Could not save the HTML slides: ${error.message}`, true);
+        }
       }
 
       function buildPdf(claims) {
@@ -4016,8 +4525,7 @@
         );
         const { name, project } = state.candidate;
 
-        // Layout runs twice: the first pass learns which page each artifact lands on, for the contents page numbers.
-        const layout = (tocPages) => {
+        const layout = () => {
           const pages = [];
           const images = [];
           const dests = [];
@@ -4111,6 +4619,132 @@
                     url: link,
                   });
                 }
+              });
+            }
+            y -= gap;
+          };
+          const richBlocks = (html) => {
+            const root = new DOMParser().parseFromString(
+              `<body>${sanitizeHtml(html)}</body>`,
+              "text/html",
+            ).body;
+            const blocks = [];
+            let block = null;
+            const open = (bullet, depth) => {
+              if (block && !block.runs.length) {
+                block.bullet = bullet;
+                block.depth = depth;
+                return;
+              }
+              block = { bullet, depth, runs: [] };
+              blocks.push(block);
+            };
+            const walk = (node, bold, link, depth) => {
+              node.childNodes.forEach((child) => {
+                if (child.nodeType === Node.TEXT_NODE) {
+                  if (!block) open(false, depth);
+                  block.runs.push({ text: child.textContent, bold, link });
+                  return;
+                }
+                if (child.nodeType !== Node.ELEMENT_NODE) return;
+                const tag = child.localName;
+                if (tag === "br") {
+                  open(false, depth);
+                } else if (tag === "ul" || tag === "ol") {
+                  open(false, depth);
+                  walk(child, bold, link, depth + 1);
+                  open(false, depth);
+                } else if (tag === "li") {
+                  open(true, Math.max(0, depth - 1));
+                  walk(child, bold, link, depth);
+                } else if (tag === "p" || tag === "div") {
+                  open(false, depth);
+                  walk(child, bold, link, depth);
+                  open(false, depth);
+                } else {
+                  walk(
+                    child,
+                    bold || tag === "b",
+                    tag === "a" ? child.getAttribute("href") : link,
+                    depth,
+                  );
+                }
+              });
+            };
+            walk(root, false, null, 0);
+            return blocks;
+          };
+          // Italic has no embedded font, so italic text is drawn upright.
+          const writeRich = (
+            html,
+            { size = 10, color = C.text, lh = 1.35, gap = 0 } = {},
+          ) => {
+            const space = measure(" ", size, "F1");
+            for (const block of richBlocks(html)) {
+              const tokens = [];
+              let pending = false;
+              for (const run of block.runs) {
+                for (const part of run.text.split(/(\s+)/)) {
+                  if (!part) continue;
+                  if (/^\s/.test(part)) {
+                    pending = true;
+                    continue;
+                  }
+                  tokens.push({
+                    word: part,
+                    bold: run.bold,
+                    link: run.link,
+                    space: pending && tokens.length > 0,
+                  });
+                  pending = false;
+                }
+              }
+              if (!tokens.length) continue;
+              const bulletX = left + block.depth * 14;
+              const textX = bulletX + (block.bullet ? 12 : 0);
+              const maxW = left + width - textX;
+              const lines = [[]];
+              let lineW = 0;
+              for (const tok of tokens) {
+                const font = tok.bold ? "F2" : "F1";
+                const w = measure(tok.word, size, font);
+                let add = tok.space ? space : 0;
+                if (lines[lines.length - 1].length && lineW + add + w > maxW) {
+                  lines.push([]);
+                  lineW = 0;
+                  add = 0;
+                }
+                lines[lines.length - 1].push({ ...tok, font, add, w });
+                lineW += add + w;
+              }
+              lines.forEach((line, i) => {
+                ensure(size * lh);
+                y -= size * lh;
+                if (block.bullet && i === 0)
+                  put("\u2022", bulletX, y, size, "F1", C.primary);
+                let x = textX;
+                line.forEach((tok) => {
+                  x += tok.add;
+                  const linked = /^https?:\/\//i.test(tok.link || "");
+                  put(
+                    tok.word,
+                    x,
+                    y,
+                    size,
+                    tok.font,
+                    linked ? C.primary : color,
+                  );
+                  if (linked) {
+                    page.ops.push(
+                      `${C.primary} RG 0.5 w ${f(x)} ${f(y - 1.8)} m ${f(x + tok.w)} ${f(y - 1.8)} l S`,
+                    );
+                    page.annots.push({
+                      rect: [x, y - 3, x + tok.w, y + size],
+                      url: tok.link,
+                    });
+                  }
+                  x += tok.w;
+                });
               });
             }
             y -= gap;
@@ -4340,24 +4974,6 @@
           );
           y = cardTop - cardH;
 
-          const gapLine = (label, list) => {
-            if (!list.length) return "";
-            const open = list
-              .filter((c) => !counts[c.code])
-              .map((c) => nameOf(c.code));
-            return `- ${label}: ${open.length ? open.join(", ") : "all covered"}`;
-          };
-          const gapText = [
-            gapLine("Critical gaps", critical),
-            gapLine("Important gaps", important),
-          ]
-            .filter(Boolean)
-            .join("\n");
-          if (gapText) {
-            y -= 14;
-            write(gapText, { size: 9.5, color: C.muted, lh: 1.5 });
-          }
-
           ensure(90);
           y -= 28;
           heading("Contents");
@@ -4368,8 +4984,8 @@
             y -= 22;
             const codes = [...claim.competencies];
             const dotsW = codes.length * 11;
-            const pageLabel = tocPages ? String(tocPages[i]) : "";
-            const pageW = 24;
+            const pageLabel = `${codes.length} ${codes.length === 1 ? "competency" : "competencies"}`;
+            const pageW = measure(pageLabel, 9, "F2") + 12;
             put(String(i + 1).padStart(2, "0"), left, y, 9, "F2", C.primary);
             put(
               fit(claim.point, 10, "F1", width - 30 - dotsW - pageW - 12),
@@ -4442,16 +5058,15 @@
                 y -= 4;
               });
             }
-            const description = htmlToText(claim.description || "");
-            if (description) {
+            if (htmlToText(claim.description || "")) {
               divider();
               sectionHead("Description");
-              write(description, { size: 10, lh: 1.35 });
+              writeRich(claim.description, { size: 10, lh: 1.35 });
             }
-            if (claim.claim) {
+            if (htmlToText(claim.claim || "")) {
               divider();
               sectionHead("Claim Story");
-              write(claim.claim, { size: 10, lh: 1.35 });
+              writeRich(claim.claim, { size: 10, lh: 1.35 });
             }
             if (claim.links.length) {
               divider();
@@ -4541,10 +5156,7 @@
           return { pages, images, dests };
         };
 
-        const first = layout(null);
-        const { pages, images, dests } = layout(
-          first.dests.map((d) => d.page + 1),
-        );
+        const { pages, images, dests } = layout();
 
         const chunks = [];
         const offsets = [];
@@ -5234,8 +5846,8 @@
 
         $("competencyPicker").addEventListener("change", updateDraft);
 
-        $("draft").addEventListener("input", (event) =>
-          setDraftEdited(event.target.value.trim() !== ""),
+        $("draft").addEventListener("input", () =>
+          setDraftEdited(htmlToText($("draft").innerHTML) !== ""),
         );
 
         $("addLinkBtn").addEventListener("click", addLink);
@@ -5252,6 +5864,7 @@
           if (remove) {
             state.images.splice(Number(remove.dataset.removeImage), 1);
             renderImages();
+            scheduleAutosave();
           } else if (event.target.matches("[data-zoom-image]")) {
             openLightbox(event.target.src);
           }
@@ -5341,6 +5954,7 @@
           if (index === undefined) return;
           state.links.splice(Number(index), 1);
           renderLinks();
+          scheduleAutosave();
         });
 
         $("flowList").addEventListener("click", (event) => {
@@ -5348,6 +5962,7 @@
           if (index === undefined) return;
           state.flow.splice(Number(index), 1);
           renderFlowForm();
+          scheduleAutosave();
         });
         $("addFlowBtn").addEventListener("click", addFlowStep);
         $("flowInput").addEventListener("keydown", (event) => {
@@ -5370,8 +5985,20 @@
         $("suggestBtn").addEventListener("click", suggestCompetencies);
         $("agentBtn").addEventListener("click", copyForAgent);
         $("clearBtn").addEventListener("click", resetForm);
-        $("mdBtn").addEventListener("click", exportMarkdown);
         $("pdfBtn").addEventListener("click", exportPdf);
+        $("mdBtn").addEventListener("click", exportMarkdown);
+        $("deckBtn").addEventListener("click", exportDeck);
+        $("deckOpenBtn").addEventListener("click", () => {
+          if (state.deckUrl) window.open(state.deckUrl, "_blank");
+        });
+        $("formCard").addEventListener("input", scheduleAutosave);
+        $("formCard").addEventListener("change", scheduleAutosave);
+        document.addEventListener("visibilitychange", () => {
+          if (document.hidden && autosaveDirty) {
+            clearTimeout(autosaveTimer);
+            autosavePending = autosave();
+          }
+        });
 
         $("claimList").addEventListener("dragstart", (event) => {
           const handle = event.target.closest("[data-drag-claim]");
@@ -5425,36 +6052,40 @@
             toggleClaimDetails(button.dataset.toggleClaim);
         });
 
-        $("rteToolbar").addEventListener("mousedown", (event) => {
-          if (event.target.closest("button")) event.preventDefault();
-        });
-        $("rteToolbar").addEventListener("click", (event) => {
-          const button = event.target.closest("button");
-          if (!button) return;
-          if (button.dataset.cmd === "link") {
-            openRteLink();
-            return;
-          }
-          $("description").focus();
-          document.execCommand(button.dataset.cmd);
-        });
-        $("description").addEventListener("keydown", (event) => {
-          if (event.key !== "Tab") return;
-          const node = window.getSelection().anchorNode;
-          const inList = (
-            node?.nodeType === 1 ? node : node?.parentElement
-          )?.closest("li");
-          if (!inList) return;
-          event.preventDefault();
-          document.execCommand(event.shiftKey ? "outdent" : "indent");
-        });
-        $("description").addEventListener("paste", (event) => {
-          event.preventDefault();
-          document.execCommand(
-            "insertText",
-            false,
-            event.clipboardData.getData("text/plain"),
-          );
+        document.querySelectorAll(".rte-toolbar").forEach((toolbar) => {
+          const target = toolbar.dataset.editor;
+          toolbar.addEventListener("mousedown", (event) => {
+            if (event.target.closest("button")) event.preventDefault();
+          });
+          toolbar.addEventListener("click", (event) => {
+            const button = event.target.closest("button");
+            if (!button) return;
+            if (button.dataset.cmd === "link") {
+              openRteLink(target);
+              return;
+            }
+            $(target).focus();
+            document.execCommand(button.dataset.cmd);
+            $(target).dispatchEvent(new Event("input"));
+          });
+          $(target).addEventListener("keydown", (event) => {
+            if (event.key !== "Tab") return;
+            const node = window.getSelection().anchorNode;
+            const inList = (
+              node?.nodeType === 1 ? node : node?.parentElement
+            )?.closest("li");
+            if (!inList) return;
+            event.preventDefault();
+            document.execCommand(event.shiftKey ? "outdent" : "indent");
+          });
+          $(target).addEventListener("paste", (event) => {
+            event.preventDefault();
+            document.execCommand(
+              "insertText",
+              false,
+              event.clipboardData.getData("text/plain"),
+            );
+          });
         });
 
         $("rteLinkApply").addEventListener("click", applyRteLink);

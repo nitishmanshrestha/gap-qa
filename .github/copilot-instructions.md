@@ -16,11 +16,11 @@ GAP Handim is a single-file tool (`view/gap-handim-tagger.html`) that helps QAs 
 
 ## Hard rules
 
-- One self-contained HTML file. No build step, no scripts from CDNs. The only allowed external request is the Google Fonts stylesheet for Figtree and Newsreader in the page `<head>`; the UI must still look fine with the system fallbacks, and the PDF never depends on it.
+- One self-contained HTML file. No build step, no scripts from CDNs. The only allowed external request is the Google Fonts stylesheet for Figtree and Newsreader in the page `<head>`; the UI must still look fine with the system fallbacks, and the exported deck never depends on it.
 - Vanilla HTML, CSS and JS only. Target Edge and Chrome on Windows.
 - Escape every user string with `esc()`. Rich text goes through `sanitizeHtml()`. Never put user text into `innerHTML` raw.
 - Do not add dependencies, frameworks or an API key field.
-- Keep the PDF writer dependency-free. Text widths come from `PDF_FONTS`; do not estimate them.
+- Keep the exported deck dependency-free: plain HTML, CSS and a small script, no CDN assets.
 - Keep stored claim fields backward compatible. Add optional fields; never rename or remove existing ones.
 
 ## Working style

@@ -1,5 +1,5 @@
 ---
-description: Architecture, data model and PDF rules for the GAP Handim single-file app. Use when editing JavaScript, saving or loading claims, or the PDF/markdown export.
+description: Architecture, data model and export rules for the GAP Handim single-file app. Use when editing JavaScript, saving or loading claims, or the HTML slides/markdown export.
 applyTo: "**/*.html"
 ---
 
@@ -16,16 +16,18 @@ applyTo: "**/*.html"
 
 - Competencies, levels and tiers: `COMPETENCIES`, `LEVELS`, `LEVEL_TIERS`, `tierOf()`. Must match the knowledge base (section 9, Appendix E).
 - Form read/write: `readEvidenceFields`, `fillEvidenceFields`, `saveClaim`, `editClaim`, `resetForm`.
-- Shared row builder: `impactRows(claim)` feeds the card, the markdown pack and the PDF. Add new evidence fields there once.
+- Shared row builder: `impactRows(claim)` feeds the card, the markdown pack and the HTML slides. Add new evidence fields there once.
 
-## PDF writer
+## HTML slides export (button: Export HTML slides)
 
-- Hand-written PDF 1.4 with embedded subset TrueType fonts (Figtree 400/600, Newsreader 400/600) from `<script id="pdfFonts">`. Widths come from that data.
-- Two-pass `layout` in `buildPdf`. Supports link annotations, internal GoTo links, outlines, and DCT images at original pixels.
-- Text must stay WinAnsi-encodable; map or strip anything else.
-- Do not add libraries. Test changes by generating a PDF from sample claims and rendering it (see the `verify-pdf` prompt).
+- `exportDeck()` (code name kept) asks for a folder (`showDirectoryPicker`) and writes `<name>_<level>_<mon>_<dd>_<hhmm>/` with `index.html`, `styles.css`, `data.json` and `images/`. The name comes from `deckFolderName()`.
+- `deckHtml(claims, shots)` builds slides from `DECK_CSS` and `DECK_JS`; the slides have no external requests and work from `file://`. Images are written as files, never embedded.
+- Artifact slides show a thumbnail strip; clicking a thumbnail opens a zoom carousel (Prev/Next, arrow keys, click to enlarge).
+- Every user string goes through `esc()`, rich text through `sanitizeHtml()`, links must be `http(s)`, image data URLs must pass `SAFE_IMAGE`.
+- Never put `</script>` literally in `DECK_JS`; the page would end its own script block.
+- Test by calling `deckHtml` with sample claims in the page and rendering it.
 
 ## Safety
 
 - Escape with `esc()`, sanitize rich text with `sanitizeHtml()`, restrict image data URLs with `SAFE_IMAGE`, only allow `http(s)` links.
-- No network calls from app logic. UI fonts come from the Google Fonts links in `<head>`; the PDF uses its own embedded fonts. No secrets in the file.
+- No network calls from app logic. UI fonts come from the Google Fonts links in `<head>`; the HTML slides use system fonts and load nothing. No secrets in the file.
