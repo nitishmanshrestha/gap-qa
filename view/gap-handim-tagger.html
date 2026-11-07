@@ -338,6 +338,93 @@
         color: var(--text-muted);
       }
 
+      .howto-situation {
+        background: var(--surface);
+        border: 1px solid var(--border);
+        border-radius: var(--radius-md);
+        box-shadow: var(--shadow-sm);
+      }
+      .howto-situation > summary {
+        display: flex;
+        align-items: center;
+        gap: var(--space-4);
+        padding: var(--space-4) var(--space-5);
+        cursor: pointer;
+        list-style: none;
+      }
+      .howto-situation > summary::-webkit-details-marker {
+        display: none;
+      }
+      .howto-situation > summary::after {
+        content: "";
+        flex: none;
+        margin-left: auto;
+        width: 8px;
+        height: 8px;
+        border-right: 2px solid var(--text-muted);
+        border-bottom: 2px solid var(--text-muted);
+        transform: rotate(45deg);
+        transition: transform 0.2s;
+      }
+      .howto-situation[open] > summary::after {
+        transform: rotate(-135deg);
+      }
+      .howto-situation > summary h3 {
+        margin: 0;
+        font-family: var(--serif);
+        font-size: 20px;
+        font-weight: 500;
+      }
+      .howto-situation > .howto-body {
+        padding: 0 var(--space-5) var(--space-4);
+      }
+      .howto-situation .howto-body p,
+      .howto-situation .howto-body li {
+        margin: 0;
+        color: var(--text-muted);
+      }
+      .howto-situation .howto-body p + p,
+      .howto-situation .howto-body ul,
+      .howto-situation .howto-body ol {
+        margin-top: var(--space-2);
+      }
+      .howto-situation .howto-body ul,
+      .howto-situation .howto-body ol {
+        padding-left: 18px;
+      }
+      .howto-situation .howto-body details {
+        padding: 10px 0;
+        border-top: 1px solid var(--border);
+      }
+      .howto-situation .howto-body summary {
+        cursor: pointer;
+        font-weight: 600;
+      }
+
+      .howto-steps {
+        background: var(--surface);
+        border: 1px solid var(--border);
+        border-radius: var(--radius-md);
+        box-shadow: var(--shadow-sm);
+      }
+      .howto-steps > .howto-situation {
+        padding: 0;
+        background: none;
+        border: 0;
+        border-radius: 0;
+        box-shadow: none;
+      }
+      .howto-steps .howto-sub {
+        padding: var(--space-3) 0;
+        border-top: 1px solid var(--border);
+      }
+      .howto-steps .howto-sub > h3 {
+        margin: 0 0 var(--space-2);
+        font-family: var(--serif);
+        font-size: 20px;
+        font-weight: 500;
+      }
+
       @media (prefers-reduced-motion: reduce) {
         * {
           animation: none !important;
@@ -368,15 +455,9 @@
 
       .layout {
         display: grid;
-        grid-template-columns: minmax(0, 1fr) minmax(0, 1fr);
+        grid-template-columns: minmax(0, 1fr);
         gap: var(--space-5);
         align-items: start;
-      }
-
-      @media (max-width: 880px) {
-        .layout {
-          grid-template-columns: 1fr;
-        }
       }
 
       .stack > * + * {
@@ -668,8 +749,8 @@
 
       .tier {
         display: inline-block;
-        padding: 2px var(--space-2);
-        font-size: 11px;
+        padding: 1px 6px;
+        font-size: 10px;
         font-weight: 700;
         letter-spacing: 0.04em;
         text-transform: uppercase;
@@ -694,6 +775,13 @@
         flex-direction: column;
         gap: var(--space-2);
         margin-top: var(--space-3);
+      }
+
+      .claim .link-list {
+        flex-direction: row;
+        flex-wrap: wrap;
+        gap: var(--space-1) var(--space-5);
+        margin: 0 0 var(--space-3);
       }
 
       .image-grid {
@@ -870,8 +958,15 @@
 
       .coverage-grid {
         display: grid;
-        grid-template-columns: repeat(2, minmax(0, 1fr));
-        gap: var(--space-3);
+        grid-template-columns: repeat(4, minmax(0, 1fr));
+        gap: var(--space-4);
+        padding: var(--space-2);
+      }
+
+      @media (max-width: 880px) {
+        .coverage-grid {
+          grid-template-columns: repeat(2, minmax(0, 1fr));
+        }
       }
 
       @media (max-width: 560px) {
@@ -881,25 +976,72 @@
       }
 
       .cov-tile {
-        padding: var(--space-3);
-        background: var(--surface-alt);
+        display: block;
+        width: 100%;
+        padding: 6px 10px;
+        font: inherit;
+        color: inherit;
+        text-align: left;
+        cursor: pointer;
+        user-select: none;
+        background: var(--surface);
         border: 1px solid var(--border);
         border-left: 4px solid var(--c-solid, var(--border));
         border-radius: var(--radius-sm);
+        box-shadow: var(--shadow-sm);
+        transition:
+          background-color 180ms var(--ease),
+          box-shadow 180ms var(--ease),
+          opacity 180ms var(--ease),
+          transform 180ms var(--ease);
+      }
+
+      .coverage-grid.has-active .cov-tile:not(.is-active) {
+        opacity: 0.5;
+      }
+
+      .cov-tile.is-active {
+        background: var(--c-bg, var(--surface));
+        transform: translateY(-2px);
+        box-shadow:
+          0 6px 16px -6px
+            color-mix(in srgb, var(--c-solid, var(--border)) 45%, transparent),
+          0 0 0 3px
+            color-mix(in srgb, var(--c-solid, var(--border)) 22%, transparent);
+      }
+
+      .cov-tile:focus-visible {
+        outline: 2px solid var(--primary);
+        outline-offset: 2px;
       }
 
       .cov-tile.has-evidence {
         background: var(--surface);
       }
 
-      .cov-tile.is-gap {
-        background: var(--danger-soft);
-        border-color: #e3c9bd;
+      .cov-tile.is-empty {
+        background: var(--surface-alt);
+        border-style: dashed;
+        border-left-color: var(--border);
+        box-shadow: none;
+        opacity: 0.6;
+        color: var(--text-muted);
+      }
+
+      .comp-filter {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        gap: var(--space-3);
+        margin: 0 0 var(--space-3);
+        font-size: 14px;
+        color: var(--text-muted);
       }
 
       .cov-name {
-        margin: 0 0 var(--space-2);
-        font-size: 14px;
+        display: block;
+        margin: 0 0 var(--space-1);
+        font-size: 13px;
         font-weight: 600;
       }
 
@@ -917,17 +1059,112 @@
         background: var(--surface);
         border: 1px solid var(--border);
         border-radius: var(--radius-md);
+        cursor: pointer;
+      }
+
+      .claim-details {
+        cursor: auto;
+      }
+
+      .suggestion-text {
+        margin: var(--space-3) 0 0;
+        font-size: 14px;
+        line-height: 1.55;
+      }
+
+      .suggestion-text p,
+      .suggestion-text ul,
+      .suggestion-text ol {
+        margin: 0 0 var(--space-2);
+      }
+
+      .suggestion-text ul,
+      .suggestion-text ol {
+        padding-left: 22px;
+      }
+
+      .suggestion-text .suggestion-head {
+        font-weight: 600;
+        margin-top: var(--space-3);
       }
 
       .claim + .claim {
         margin-top: var(--space-3);
       }
 
-      .claim-text {
-        margin: 0 0 var(--space-2);
+      .claim-head {
+        display: flex;
+        align-items: flex-start;
+        gap: var(--space-3);
+      }
+
+      .claim-title {
+        flex: 1;
+        display: flex;
+        align-items: center;
+        gap: var(--space-2);
+        min-width: 0;
+        margin: 0 0 var(--space-3);
+        padding: 0;
         font-family: var(--serif);
         font-size: 17px;
         font-weight: 600;
+        color: inherit;
+        text-align: left;
+        background: none;
+        border: 0;
+        cursor: pointer;
+      }
+
+      .claim-title:focus-visible {
+        outline: 2px solid var(--primary);
+        outline-offset: 2px;
+        border-radius: var(--radius-sm);
+      }
+
+      .claim-title-text {
+        min-width: 0;
+        overflow-wrap: anywhere;
+      }
+
+      .claim .link-item {
+        display: inline-flex;
+        align-items: baseline;
+        gap: 0.4em;
+        min-width: 0;
+        overflow-wrap: anywhere;
+      }
+
+      .claim .link-item > svg {
+        flex: none;
+        align-self: center;
+        color: var(--primary);
+      }
+
+      .claim .link-item > svg,
+      .claim-chevron {
+        width: 14px;
+        height: 14px;
+        fill: none;
+        stroke: currentColor;
+        stroke-width: 2;
+        stroke-linecap: round;
+        stroke-linejoin: round;
+      }
+
+      .claim-chevron {
+        flex: none;
+        margin-left: auto;
+        color: var(--text-muted);
+        transition: transform var(--ease);
+      }
+
+      .claim-title[aria-expanded="true"] .claim-chevron {
+        transform: rotate(180deg);
+      }
+
+      .claim-details[hidden] {
+        display: none;
       }
 
       .claim a {
@@ -957,10 +1194,6 @@
         background: var(--c-bg, var(--surface-alt));
         border: 1px solid var(--c-bd, var(--border));
         border-radius: 999px;
-      }
-
-      .claim-toggle {
-        margin-top: var(--space-1);
       }
 
       .claim-description {
@@ -1028,6 +1261,7 @@
       .rte-editor:empty::before {
         content: attr(data-placeholder);
         color: var(--text-muted);
+        white-space: pre-line;
       }
 
       .rte-editor a {
@@ -1051,20 +1285,26 @@
         display: flex;
         align-items: center;
         justify-content: flex-end;
+        gap: var(--space-2);
         margin-top: var(--space-3);
       }
 
       .drag-handle {
-        width: 16px;
-        height: 22px;
-        margin-right: auto;
+        width: 12px;
+        height: 18px;
+        flex: none;
+        margin-top: 4px;
         cursor: grab;
-        background: radial-gradient(
-            circle,
-            var(--text-muted) 1.2px,
-            transparent 1.6px
-          )
-          center / 6px 6px;
+        background: var(--text-muted);
+        -webkit-mask: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 10 16' fill='black'%3E%3Ccircle cx='2.5' cy='2.5' r='1.5'/%3E%3Ccircle cx='7.5' cy='2.5' r='1.5'/%3E%3Ccircle cx='2.5' cy='8' r='1.5'/%3E%3Ccircle cx='7.5' cy='8' r='1.5'/%3E%3Ccircle cx='2.5' cy='13.5' r='1.5'/%3E%3Ccircle cx='7.5' cy='13.5' r='1.5'/%3E%3C/svg%3E")
+          center / contain no-repeat;
+        mask: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 10 16' fill='black'%3E%3Ccircle cx='2.5' cy='2.5' r='1.5'/%3E%3Ccircle cx='7.5' cy='2.5' r='1.5'/%3E%3Ccircle cx='2.5' cy='8' r='1.5'/%3E%3Ccircle cx='7.5' cy='8' r='1.5'/%3E%3Ccircle cx='2.5' cy='13.5' r='1.5'/%3E%3Ccircle cx='7.5' cy='13.5' r='1.5'/%3E%3C/svg%3E")
+          center / contain no-repeat;
+        transition: background-color var(--ease);
+      }
+
+      .drag-handle:hover {
+        background: var(--primary);
       }
 
       .drag-handle:active {
@@ -1208,6 +1448,23 @@
         background: var(--danger);
       }
 
+      .snackbar-ai {
+        top: 0;
+        bottom: auto;
+        left: 0;
+        right: 0;
+        max-width: none;
+        padding: 14px 20px;
+        border-radius: 0;
+        text-align: center;
+        background: var(--danger);
+        transform: translateY(-100%);
+      }
+
+      .snackbar-ai.is-visible {
+        transform: translateY(0);
+      }
+
       .data-status.is-error {
         color: var(--danger);
       }
@@ -1240,6 +1497,64 @@
         gap: var(--space-2);
         font-size: 14px;
         cursor: pointer;
+      }
+
+      .export-options {
+        margin: 0;
+        font: inherit;
+        font-size: 14px;
+        font-weight: 600;
+        color: var(--text);
+        accent-color: var(--primary);
+      }
+
+      .claims-actions {
+        display: flex;
+        align-items: center;
+        gap: var(--space-2);
+      }
+      #toggleAllBtn[hidden] {
+        display: none;
+      }
+      .export-menu-list .export-options {
+        padding: var(--space-2) var(--space-3);
+        white-space: nowrap;
+      }
+
+      .export-menu {
+        position: relative;
+      }
+      .export-menu-list {
+        position: absolute;
+        top: calc(100% + var(--space-1));
+        right: 0;
+        z-index: 10;
+        display: flex;
+        flex-direction: column;
+        min-width: 160px;
+        padding: var(--space-1);
+        background: var(--surface);
+        border: 1px solid var(--border);
+        border-radius: var(--radius-md);
+      }
+      .export-menu-list[hidden] {
+        display: none;
+      }
+      .export-menu-list button {
+        padding: var(--space-2) var(--space-3);
+        border: 0;
+        border-radius: var(--radius-sm);
+        background: none;
+        color: var(--text);
+        font: inherit;
+        font-size: 14px;
+        text-align: left;
+        cursor: pointer;
+      }
+      .export-menu-list button:hover,
+      .export-menu-list button:focus-visible {
+        background: var(--primary-soft);
+        outline: none;
       }
 
       .impact-list {
@@ -1622,7 +1937,7 @@
       }
 
       .layout {
-        gap: 28px;
+        gap: var(--space-6);
       }
 
       .card {
@@ -1697,8 +2012,8 @@
               a glance, naming the competencies it touches, with screenshots,
               links and metrics for the detailed artifact one click away in its
               utility belt. Tag every claim to the reasonable competencies it
-              proves, spot the gaps early, and export HTML slides or Markdown
-              file.
+              proves, spot the gaps early, and export HTML slides, PDF or
+              Markdown file.
               <br /><br />Built by a QA, for fellow QAs. <br />All the best!
             </p>
           </div>
@@ -1712,6 +2027,16 @@
               aria-selected="true"
             >
               Tagger
+            </button>
+            <button
+              type="button"
+              class="tab"
+              role="tab"
+              id="tabSuggestions"
+              data-view="suggestions"
+              aria-selected="false"
+            >
+              Suggestions
             </button>
             <button
               type="button"
@@ -1798,19 +2123,59 @@
       </header>
 
       <div class="layout">
+        <section class="card" aria-labelledby="coverageTitle">
+          <details class="form-section" open>
+            <summary class="form-section-title" id="coverageTitle">
+              Coverage
+            </summary>
+            <div class="form-section-body">
+              <p class="field-info">
+                Each tile is one competency for your level. Tiles with evidence
+                show how many saved artifacts are tagged with it, and the tier
+                shows how much it weighs for your level: a critical gap can
+                block promotion on its own. Click a tile to filter the saved
+                artifacts to that competency. Click it again, or use Show all,
+                to clear the filter.
+              </p>
+              <p class="summary" id="coverageSummary"></p>
+              <button
+                type="button"
+                class="btn btn-ghost btn-small"
+                id="coverageShowAllBtn"
+                hidden
+              >
+                Show all
+              </button>
+              <div class="coverage-grid" id="coverageGrid"></div>
+            </div>
+          </details>
+        </section>
+
         <section class="card" id="formCard" aria-labelledby="formTitle">
-          <h2 class="card-title" id="formTitle">Add an artifact</h2>
+          <div class="card-header">
+            <h2 class="card-title" id="formTitle">Add an artifact</h2>
+            <button
+              type="button"
+              class="btn btn-ghost btn-small"
+              id="formToggleAllBtn"
+            >
+              Expand all
+            </button>
+          </div>
 
           <details class="form-section">
             <summary class="form-section-title">The claim</summary>
             <div class="form-section-body">
               <div class="field">
                 <label class="label" for="point">Artifact</label>
-                <p class="field-info">What you delivered, and where.</p>
+                <p class="field-info">
+                  A concrete piece of work you can point at: a plan, suite,
+                  tool, document, session or incident handling.
+                </p>
                 <input
                   type="text"
                   id="point"
-                  placeholder="The work you shipped, e.g. PR review bot for the automation repo"
+                  placeholder="e.g. AI-assisted regression case drafting workflow"
                 />
               </div>
 
@@ -1823,7 +2188,7 @@
                 <input
                   type="text"
                   id="problem"
-                  placeholder="e.g. Automation PRs sat unreviewed for days"
+                  placeholder="e.g. Drafting regression cases for each release was eating two days a sprint"
                 />
               </div>
 
@@ -1880,7 +2245,7 @@
                   contenteditable="true"
                   role="textbox"
                   aria-multiline="true"
-                  data-placeholder="Context, what you did, and the measurable result"
+                  data-placeholder="e.g.&#10;• Built an AI-assisted workflow that drafts regression cases from the acceptance criteria&#10;• Reviewed every generated case myself before it went into the suite&#10;• Taught myself the AI tooling and folded the workflow into the team template&#10;• Ran a workshop so the whole team could use it on their own stories"
                 ></div>
                 <div class="rte-link-row" id="rteLinkRow" hidden>
                   <input type="text" id="rteLinkInput" placeholder="https://" />
@@ -1900,22 +2265,28 @@
               <div class="field">
                 <div class="label">
                   <span>Competencies touched</span>
-                  <span class="label-actions">
-                    <button
-                      type="button"
-                      class="btn btn-ghost btn-small"
-                      id="suggestBtn"
-                      title="Tick likely competencies from the words in your artifact, description and impact"
-                    >
-                      Suggest competency touched
-                    </button>
-                  </span>
                 </div>
-                <p class="field-info">Tick only what you can prove.</p>
-                <div id="competencyPicker"></div>
-                <p class="hint" id="suggestNote">
-                  Select every competency this artifact touches.
+                <p class="field-info">
+                  Tick only what you can prove. Most substantial artifacts touch
+                  four to six.
                 </p>
+                <div id="competencyPicker"></div>
+              </div>
+
+              <div class="field">
+                <label class="label" for="agentSuggestion"
+                  >AI suggestion <span class="optional">(optional)</span></label
+                >
+                <p class="field-info">
+                  Paste the agent's reply for this artifact. It stays with the
+                  artifact and is listed on the Suggestions page. Exports do not
+                  include it.
+                </p>
+                <textarea
+                  id="agentSuggestion"
+                  rows="5"
+                  placeholder="e.g. Suggested: TST, AUT. Missing: proof of the before and after numbers."
+                ></textarea>
               </div>
 
               <div class="field">
@@ -1923,12 +2294,12 @@
                   >Consequence <span class="optional">(optional)</span></label
                 >
                 <p class="field-info">
-                  The outcome it enabled, not the problem or the metric.
+                  The business result the delta enabled, not the metric itself.
                 </p>
                 <input
                   type="text"
                   id="consequence"
-                  placeholder="What it enabled, e.g. the team moved to twice-weekly releases"
+                  placeholder="e.g. Regression cases ready at the start of each sprint, and the whole team on one template"
                 />
               </div>
 
@@ -1939,9 +2310,8 @@
                   >
                 </div>
                 <p class="field-info">
-                  Built from the artifact, problem, description, the scenario
-                  behind each ticked competency, and the outcome. Leave it blank
-                  to skip.
+                  Write the story yourself. Map each ticked competency to the
+                  scenario behind it. Leave it blank to skip.
                 </p>
                 <div class="rte-toolbar" id="storyToolbar" data-editor="draft">
                   <button
@@ -1987,7 +2357,7 @@
                   contenteditable="true"
                   role="textbox"
                   aria-multiline="true"
-                  data-placeholder="Auto-drafted from the fields above. Edit it freely; your wording and formatting are kept."
+                  data-placeholder="e.g.&#10;• AI-assisted regression case drafting workflow for the sprint release cycle&#10;• It solved this problem: drafting regression cases took two days a sprint&#10;• Test Automation: built the workflow that drafts cases from the acceptance criteria&#10;• Learning &amp; Innovation: taught myself the AI tooling and reviewed every generated case before use&#10;• Leadership &amp; Mentorship: ran a workshop so the whole team could adopt it&#10;• Ownership: drove adoption into the next sprint without being chased&#10;• Possible outcome: regression drafting dropped from two days to half a day per sprint"
                 ></div>
               </div>
             </div>
@@ -2007,11 +2377,19 @@
                 <div class="field-grid">
                   <div>
                     <label class="label" for="before">Baseline (before)</label>
-                    <input type="text" id="before" placeholder="e.g. 26 hrs" />
+                    <input
+                      type="text"
+                      id="before"
+                      placeholder="e.g. 2 days per sprint"
+                    />
                   </div>
                   <div>
                     <label class="label" for="after">After</label>
-                    <input type="text" id="after" placeholder="e.g. 6 hrs" />
+                    <input
+                      type="text"
+                      id="after"
+                      placeholder="e.g. half a day per sprint"
+                    />
                   </div>
                 </div>
               </div>
@@ -2027,13 +2405,15 @@
                 <input
                   type="text"
                   id="method"
-                  placeholder="Source and method, e.g. Git median PR-to-merge, last 30 days"
+                  placeholder="e.g. Sprint timesheets for regression drafting, three sprints before and after rollout"
                 />
               </div>
 
               <div class="field">
                 <p class="field-info">
-                  How reliable the figures and proof are.
+                  Measured if it came from a system, Estimated if you calculated
+                  it, No baseline if there was no before state. The panel asks
+                  how you measured it.
                 </p>
                 <div class="field-grid">
                   <div>
@@ -2155,13 +2535,14 @@
               <div class="field">
                 <label class="label" for="linkInput">Proof</label>
                 <p class="field-info">
-                  Verifiable links: repo, PR, ticket or dashboard.
+                  Links the panel can open: repo, PR, ticket, dashboard or
+                  screenshot.
                 </p>
                 <div class="input-row">
                   <input
                     type="text"
                     id="linkInput"
-                    placeholder="Repo, PR, dashboard, Jira ticket or screenshot link"
+                    placeholder="e.g. Pull request for the drafting workflow"
                   />
                   <input
                     type="text"
@@ -2214,7 +2595,7 @@
                   <input
                     type="text"
                     id="flowInput"
-                    placeholder="Next step in the process"
+                    placeholder="e.g. Generated case corrected before merge, reviewed line by line"
                     aria-label="Flow step"
                   />
                   <button type="button" class="btn btn-ghost" id="addFlowBtn">
@@ -2248,48 +2629,91 @@
           </div>
         </section>
 
-        <div class="stack">
-          <section class="card" aria-labelledby="coverageTitle">
-            <h2 class="card-title" id="coverageTitle">Coverage</h2>
-            <p class="summary" id="coverageSummary"></p>
-            <div class="coverage-grid" id="coverageGrid"></div>
-            <div class="data-actions">
+        <section class="card" aria-labelledby="claimsTitle">
+          <div class="card-header">
+            <h2 class="card-title" id="claimsTitle">
+              Saved artifacts (<span id="claimCount">0</span>)
+            </h2>
+            <div class="claims-actions">
               <button
                 type="button"
-                class="btn btn-ghost"
-                id="deckOpenBtn"
+                class="btn btn-ghost btn-small"
+                id="toggleAllBtn"
                 hidden
-              >
-                Open last slides
-              </button>
+              ></button>
+              <div class="export-menu">
+                <button
+                  type="button"
+                  class="btn"
+                  id="exportBtn"
+                  aria-haspopup="menu"
+                  aria-expanded="false"
+                  aria-controls="exportMenu"
+                >
+                  Export
+                </button>
+                <div
+                  class="export-menu-list"
+                  id="exportMenu"
+                  role="menu"
+                  hidden
+                >
+                  <label class="check-row export-options">
+                    <input type="checkbox" id="storyToggle" />
+                    Include claim story in HTML slides and PDF
+                  </label>
+                  <button
+                    type="button"
+                    role="menuitem"
+                    data-export-format="deck"
+                  >
+                    HTML slides
+                  </button>
+                  <button
+                    type="button"
+                    role="menuitem"
+                    data-export-format="pdf"
+                  >
+                    PDF
+                  </button>
+                  <button type="button" role="menuitem" data-export-format="md">
+                    Markdown
+                  </button>
+                </div>
+              </div>
             </div>
-          </section>
-
-          <section class="card" aria-labelledby="claimsTitle">
-            <div class="card-header">
-              <h2 class="card-title" id="claimsTitle">
-                Saved artifacts (<span id="claimCount">0</span>)
-              </h2>
-              <span class="data-actions">
-                <button type="button" class="btn btn-ghost" id="deckBtn">
-                  Export HTML slides
-                </button>
-                <button type="button" class="btn btn-ghost" id="pdfBtn">
-                  Export PDF
-                </button>
-                <button type="button" class="btn" id="mdBtn">
-                  Export Markdown
-                </button>
-              </span>
-            </div>
-            <div id="claimList"></div>
-          </section>
-        </div>
+          </div>
+          <div id="claimList"></div>
+        </section>
       </div>
+      <section
+        class="card suggestions"
+        id="suggestionsView"
+        hidden
+        aria-labelledby="tabSuggestions"
+      >
+        <div class="card-header">
+          <h2 class="card-title">
+            AI suggestions (<span id="suggestionCount">0</span>)
+          </h2>
+        </div>
+        <p class="field-info suggestion-warning" role="note">
+          <strong>AI can make mistakes.</strong> Check each suggestion before
+          you rely on it. You can adjust any artifact with Edit artifact.
+        </p>
+        <p class="field-info">
+          From the gap-artifact-polisher agent, one per artifact in the current
+          level.
+        </p>
+        <div id="suggestionList"></div>
+      </section>
       <section class="howto" id="howtoView" hidden aria-labelledby="tabHowto">
         <div class="howto-hero">
-          <h2>Turn your work into promotion evidence</h2>
-          <p>Log each piece of work, tag what it proves, and fill the gaps.</p>
+          <h2>How to use GAP Handim</h2>
+          <p>
+            Log each piece of work, tag what it proves, fill the gaps, then
+            export.
+          </p>
           <ol class="howto-flow" aria-label="Overview">
             <li>Start a file</li>
             <li>Add artifacts</li>
@@ -2297,172 +2721,223 @@
             <li>Export</li>
           </ol>
         </div>
-        <article class="howto-step">
-          <div class="howto-num">1</div>
-          <div>
-            <h3>Start your file</h3>
-            <p>
-              Enter the name, pick the level (project is optional), then click
-              <strong>Create new file</strong> or
-              <strong>Open existing</strong>.
-            </p>
-            <ul>
-              <li>
-                Save as the suggested name, e.g. <code>your-name-l3.json</code>.
-              </li>
-              <li>
-                Existing file: loaded. New file: created. Choose
-                <strong>Replace</strong> if asked; your data is kept.
-              </li>
-              <li>Edge or Chrome only.</li>
-            </ul>
-          </div>
-        </article>
-        <article class="howto-step">
-          <div class="howto-num">2</div>
-          <div>
-            <h3>Check your level</h3>
-            <p>
-              Competencies are
-              <span class="howto-pill is-critical">critical</span>,
-              <span class="howto-pill">important</span> or
-              <span class="howto-pill">supporting</span> for your level. Cover
-              the critical ones first. ASE has no tier list yet.
-            </p>
-            <p>
-              Switching the target level shows only that level's artifacts and
-              coverage.
-            </p>
-          </div>
-        </article>
-        <article class="howto-step">
-          <div class="howto-num">3</div>
-          <div>
-            <h3>Add an artifact</h3>
-            <p>One piece of work someone could verify.</p>
-            <ul>
-              <li><strong>Artifact</strong>: what you shipped</li>
-              <li>
-                <strong>Problem it solved</strong> and
-                <strong>Description</strong>: required
-              </li>
-              <li><strong>Competencies</strong>: required, what it proves</li>
-              <li>
-                <strong>Claim story</strong>: auto-drafted from the fields and
-                ticked competencies; edit it
-              </li>
-              <li>
-                <strong>Impact</strong> (optional): before, after, how measured
-              </li>
-              <li>
-                <strong>Proof</strong> (optional): links, screenshots or a flow
-              </li>
-            </ul>
-            <p>
-              Short on time? Type the artifact name, the problem it solved and a
-              few words of description, then click
-              <strong>Suggest competency touched</strong> to tick likely
-              competencies (a keyword match, so check each one).
-              <strong>Copy for agent</strong> copies the artifact for the
-              <code>gap-artifact-polisher</code> agent, which suggests
-              competencies from the knowledge base and lists what is missing.
-            </p>
-            <div class="howto-example">
-              <span class="howto-example-label">Example</span>
-              <p>
-                <strong>Artifact:</strong> PR review bot<br />
-                <strong>Impact:</strong> PR-to-merge 26 hrs to 6 hrs
-                (measured)<br />
-                <strong>Proof:</strong> repo link, before/after numbers
-              </p>
-            </div>
-          </div>
-        </article>
-        <article class="howto-step">
-          <div class="howto-num">4</div>
-          <div>
-            <h3>Save and read coverage</h3>
-            <p>
-              Click <strong>Save artifact</strong>. Red tiles are critical
-              competencies with no evidence yet. Save needs the name, problem,
-              description and one competency; the form shows what is missing.
-            </p>
-          </div>
-        </article>
-        <article class="howto-step">
-          <div class="howto-num">5</div>
-          <div>
-            <h3>Review</h3>
-            <p>
-              Edit or delete artifacts. Drag the grip on an artifact to reorder
-              it: the order sets the artifact numbers. Edited the JSON by hand?
-              Switch back to this tab to reload it.
-            </p>
-          </div>
-        </article>
-        <article class="howto-step">
-          <div class="howto-num">6</div>
-          <div>
-            <h3>Export</h3>
-            <p>
-              <strong>Export HTML slides</strong> saves a folder with the slides
-              (index.html, styles.css, data.json and images) named after you,
-              your level and the time. <strong>Export Markdown</strong> opens a
-              save dialog in your file's folder. Both use all ready artifacts
-              for the current level. Agent drafts are excluded until you edit
-              them and save here.
-            </p>
-            <button type="button" class="btn howto-cta" id="howtoStart">
-              Start tagging
-            </button>
-          </div>
-        </article>
-        <section class="howto-faq" aria-labelledby="agentHowtoTitle">
-          <h3 id="agentHowtoTitle">Draft claims with the agent (optional)</h3>
-          <ol>
+        <section class="howto-faq" aria-labelledby="howtoSituationTitle">
+          <h3 id="howtoSituationTitle">Find your situation</h3>
+          <ul>
             <li>
-              In Copilot Chat, choose <strong>gap-artifact-polisher</strong>.
+              <strong>Starting fresh:</strong> create a data file and add your
+              first artifacts.
             </li>
             <li>
-              Paste a document with one block per artifact: Point, Problem,
-              Before, After, Consequence, Method (estimates only) and Proof.
+              <strong>Continuing:</strong> reopen a saved file and add more.
             </li>
             <li>
-              Complete any artifacts the agent lists as incomplete. It drafts
-              the rest.
+              <strong>Streamlining:</strong> cut a long list to the strongest
+              artifacts.
             </li>
             <li>
-              Confirm the drafts. The agent writes
-              <code>source/your-name-le.json</code>.
+              <strong>Consolidating:</strong> export the HTML slides, PDF or
+              Markdown.
             </li>
             <li>
-              Click <strong>Open existing</strong> and choose that file. Hand
-              edits reload when you return to this tab.
+              <strong>Drafting:</strong> turn notes into claims with the agent.
             </li>
-          </ol>
-          <p>
-            Unfinished artifact? Say <strong>draft</strong> in the chat, or use
-            <strong>Copy for agent</strong> with required items blank. The agent
-            saves it as a draft and lists what is missing.
-          </p>
-          <details open>
-            <summary>Limits</summary>
-            <ul>
-              <li>
-                Links are not opened. Notes go to Copilot, so do not paste
-                confidential customer data.
-              </li>
-              <li>
-                The agent suggests figure status, proof and competencies (first
-                is primary). Check them in the review.
-              </li>
-              <li>
-                Agent claims carry <code>createdAt</code> 2026-11-06. To change
-                it, edit the JSON and return to this tab.
-              </li>
-            </ul>
-          </details>
+          </ul>
         </section>
+        <div class="howto-steps">
+          <details class="howto-situation" id="howto-step-1">
+            <summary>
+              <h3>Starting fresh</h3>
+            </summary>
+            <div class="howto-body">
+              <p>
+                Enter the name, pick the level (project is optional), then click
+                <strong>Create new file</strong> or
+                <strong>Open existing</strong>.
+              </p>
+              <ul>
+                <li>
+                  Save as the suggested name, e.g.
+                  <code>your-name-l3.json</code>.
+                </li>
+                <li>
+                  Existing file: loaded. New file: created. Choose
+                  <strong>Replace</strong> if asked; your data is kept.
+                </li>
+                <li>Edge or Chrome only.</li>
+              </ul>
+              <div class="howto-sub">
+                <h3>Check your level</h3>
+                <p>
+                  Competencies are
+                  <span class="howto-pill is-critical">critical</span>,
+                  <span class="howto-pill">important</span> or
+                  <span class="howto-pill">supporting</span> for your level.
+                  Cover the critical ones first. ASE has no tier list yet.
+                </p>
+                <p>
+                  Switching the target level shows only that level's artifacts
+                  and coverage.
+                </p>
+              </div>
+              <div class="howto-sub">
+                <h3>Adding artifacts</h3>
+                <p>One piece of work someone could verify.</p>
+                <ul>
+                  <li><strong>Artifact</strong>: what you shipped</li>
+                  <li>
+                    <strong>Problem it solved</strong> and
+                    <strong>Description</strong>: required
+                  </li>
+                  <li>
+                    <strong>Competencies</strong>: required, what it proves
+                  </li>
+                  <li>
+                    <strong>Claim story</strong>: written by you; leave it blank
+                    to skip
+                  </li>
+                  <li>
+                    <strong>Impact</strong> (optional): before, after, how
+                    measured
+                  </li>
+                  <li>
+                    <strong>Proof</strong> (optional): links, screenshots or a
+                    flow
+                  </li>
+                </ul>
+                <p>
+                  Short on time? Click <strong>Copy for agent</strong> to copy
+                  the artifact for the <code>gap-artifact-polisher</code> agent,
+                  which suggests competencies from the knowledge base and lists
+                  what is missing. Paste its reply into
+                  <strong>AI suggestion</strong> to keep it with the artifact.
+                  The <strong>Suggestions</strong> tab lists them all.
+                </p>
+                <div class="howto-example">
+                  <span class="howto-example-label">Example</span>
+                  <p>
+                    <strong>Artifact:</strong> PR review bot<br />
+                    <strong>Impact:</strong> PR-to-merge 26 hrs to 6 hrs
+                    (measured)<br />
+                    <strong>Proof:</strong> repo link, before/after numbers
+                  </p>
+                </div>
+              </div>
+              <div class="howto-sub">
+                <h3>Save and read coverage</h3>
+                <p>
+                  Click <strong>Save artifact</strong>. Red tiles are critical
+                  competencies with no evidence yet. Save needs the name,
+                  problem, description and one competency; the form shows what
+                  is missing.
+                </p>
+              </div>
+              <div class="howto-sub">
+                <h3>Consolidating the output</h3>
+                <p>
+                  Click <strong>Export</strong> and choose
+                  <strong>HTML slides</strong>, <strong>PDF</strong> or
+                  <strong>Markdown</strong>. Nothing is selected by default.
+                </p>
+                <ul>
+                  <li>
+                    <strong>HTML slides</strong> saves a folder with the slides
+                    (index.html, styles.css, data.json and images) named after
+                    you, your level and the time.
+                  </li>
+                  <li>
+                    <strong>Markdown</strong> opens a save dialog in your file's
+                    folder.
+                  </li>
+                  <li>
+                    <strong>Include claim story in HTML slides and PDF</strong>
+                    (in the menu) adds each claim story to those exports. Off by
+                    default.
+                  </li>
+                </ul>
+                <p>
+                  Exports use all ready artifacts for the current level. Agent
+                  drafts are excluded until you edit them and save here.
+                </p>
+                <button type="button" class="btn howto-cta" id="howtoStart">
+                  Start tagging
+                </button>
+              </div>
+            </div>
+          </details>
+        </div>
+        <details class="howto-situation">
+          <summary>
+            <h3 id="continueHowtoTitle">Continuing with saved data</h3>
+          </summary>
+          <div class="howto-body">
+            <ul>
+              <li>
+                Click <strong>Open existing</strong> and choose your JSON file.
+              </li>
+              <li>
+                Edited the JSON by hand, or changed by the agent? The app
+                reloads the file when you return to its window.
+              </li>
+              <li>
+                Before big changes, click <strong>Backup</strong> to download a
+                copy of your data file.
+              </li>
+            </ul>
+          </div>
+        </details>
+        <details class="howto-situation">
+          <summary>
+            <h3 id="agentHowtoTitle">
+              Drafting claims with the agent (optional)
+            </h3>
+          </summary>
+          <div class="howto-body">
+            <ol>
+              <li>
+                In Copilot Chat, choose <strong>gap-artifact-polisher</strong>.
+              </li>
+              <li>
+                Paste a document with one block per artifact: Point, Problem,
+                Before, After, Consequence, Method (estimates only) and Proof.
+              </li>
+              <li>
+                Complete any artifacts the agent lists as incomplete. It drafts
+                the rest.
+              </li>
+              <li>
+                Confirm the drafts. The agent writes
+                <code>source/your-name-le.json</code>.
+              </li>
+              <li>
+                Click <strong>Open existing</strong> and choose that file. Hand
+                edits reload when you return to the app window.
+              </li>
+            </ol>
+            <p>
+              Unfinished artifact? Say <strong>draft</strong> in the chat, or
+              use <strong>Copy for agent</strong> with required items blank. The
+              agent saves it as a draft and lists what is missing.
+            </p>
+            <details open>
+              <summary>Limits</summary>
+              <ul>
+                <li>
+                  Links are not opened. Notes go to Copilot, so do not paste
+                  confidential customer data.
+                </li>
+                <li>
+                  The agent suggests figure status, proof and competencies
+                  (first is primary). Check them in the review.
+                </li>
+                <li>
+                  Agent claims carry <code>createdAt</code> 2026-11-06. To
+                  change it, edit the JSON file.
+                </li>
+              </ul>
+            </details>
+          </div>
+        </details>
         <div class="howto-faq">
           <h3>Troubleshooting</h3>
           <details>
@@ -2499,9 +2974,15 @@
       </section>
     </main>
 
-    <footer class="site-footer">Created by Nitish Man Shrestha</footer>
+    <footer class="site-footer">by Nitish Man Shrestha</footer>
 
     <div class="toast" id="toast" role="status" aria-live="polite"></div>
+    <div
+      class="toast snackbar-ai"
+      id="aiSnackbar"
+      role="status"
+      aria-live="polite"
+    ></div>
     <div class="lightbox" id="lightbox" hidden>
       <div class="lb-toolbar" id="lbToolbar">
         <button type="button" data-lb="out" aria-label="Zoom out">
@@ -2629,8 +3110,8 @@
         links: [],
         images: [],
         flow: [],
-        draftEdited: false,
         expandedClaims: new Set(),
+        activeCompetency: null,
         editingId: null,
         deckUrl: "",
       };
@@ -2779,86 +3260,6 @@
         return match ? match.name : code;
       }
 
-      // One hedged sentence per competency: how it may be shown, and what it could lead to.
-      const COMPETENCY_TOUCH = {
-        OWN: "Ownership may be shown by carrying the work from delivery through to sign-off, which could reduce hand-offs and open questions.",
-        DOM: "Domain knowledge may be shown by applying the relevant business rules directly to the solution, which could reduce rework from misread requirements.",
-        TST: "Test coverage may be shown by designing and running tests across the affected functional areas, which could surface defects earlier.",
-        BUG: "Bug reporting may be shown by identifying, analysing and documenting defects in enough detail for others to act, which could shorten fix cycles.",
-        TPS: "Test planning may be shown by setting scope, risk priorities and exit criteria before execution, which could keep effort focused on the highest risks.",
-        COM: "Communication and collaboration may be shown by aligning the approach with stakeholders and reviewing it with them, which could reduce late changes.",
-        TLS: "Tools and frameworks may be shown by selecting and configuring suitable options for the work, which could reduce manual effort.",
-        PSC: "Problem solving may be shown by diagnosing root causes and weighing trade-offs before deciding, which could prevent the same fault recurring.",
-        AUT: "Test automation may be shown by replacing repeated manual checks with automated tests, which could shorten regression runs.",
-        LDR: "Leadership may be shown by directing and coaching others on the approach and its standards, which could improve consistency across the team.",
-        LRN: "Learning and innovation may be shown by researching and trialling a new approach before adopting it, which could improve the outcome.",
-        CID: "CI/CD and DevOps may be shown by building the change into the delivery pipeline so that builds, tests and releases run automatically, which could shorten release cycles.",
-      };
-
-      const stripEnd = (text) => text.trim().replace(/[.\s;:]+$/, "");
-      // Keeps acronyms such as PR at the start of a clause.
-      const lowerFirst = (text) => {
-        const first = text.split(" ")[0];
-        return first === first.toUpperCase()
-          ? text
-          : text.charAt(0).toLowerCase() + text.slice(1);
-      };
-      const sentence = (text) => {
-        const clean = stripEnd(text);
-        return clean
-          ? `${clean.charAt(0).toUpperCase()}${clean.slice(1)}.`
-          : "";
-      };
-      // Claim story: artifact, problem, description, the scenario sentence behind each competency, then the outcome.
-      function buildStory({
-        point = "",
-        problem = "",
-        description = "",
-        consequence = "",
-        competencies = [],
-      }) {
-        if (!stripEnd(point)) return "";
-        const lines = htmlToText(description)
-          .split("\n")
-          .map((line) => line.replace(/^\s*-\s*/, "").trim())
-          .filter(Boolean);
-        const scenario = lines
-          .flatMap((text) => text.split(/(?<=[.!?])\s+/))
-          .map((text) => text.trim())
-          .filter(Boolean);
-        const tierIndex = (code) => {
-          const index = TIERS.findIndex((t) => t.key === tierOf(code));
-          return index < 0 ? TIERS.length : index;
-        };
-        const sentences = [sentence(point)];
-        if (stripEnd(problem))
-          sentences.push(
-            `It solved this problem: ${lowerFirst(stripEnd(problem))}.`,
-          );
-        lines.forEach((line) => sentences.push(sentence(line)));
-        COMPETENCIES.filter((c) => competencies.includes(c.code))
-          .sort((a, b) => tierIndex(a.code) - tierIndex(b.code))
-          .forEach((c) => {
-            const hints = hintsFor(c.code);
-            const evidence = scenario
-              .map((text) => ({
-                text,
-                score: hints.filter((hint) => hint.re.test(text.toLowerCase()))
-                  .length,
-              }))
-              .filter((hit) => hit.score)
-              .sort((a, b) => b.score - a.score)[0]?.text;
-            sentences.push(
-              evidence
-                ? `${c.name}: ${sentence(evidence)}`
-                : COMPETENCY_TOUCH[c.code],
-            );
-          });
-        const result = stripEnd(consequence);
-        if (result) sentences.push(`Possible outcome: ${lowerFirst(result)}.`);
-        return sentences.join(" ");
-      }
-
       function getSelectedCodes() {
         return Array.from(
           document.querySelectorAll('input[name="competency"]:checked'),
@@ -2918,7 +3319,6 @@
         state.level = code;
         $("levelSelect").value = code;
         renderCompetencyPicker();
-        updateDraft();
         renderCoverage();
         renderClaims();
       }
@@ -2951,268 +3351,6 @@
       </div>`,
           )
           .join("");
-      }
-
-      function storyInputFromForm() {
-        return {
-          point: $("point").value,
-          problem: $("problem").value,
-          description: getDescriptionHtml(),
-          consequence: $("consequence").value,
-          competencies: getSelectedCodes(),
-        };
-      }
-
-      function updateDraft() {
-        if (state.draftEdited) return;
-        const input = storyInputFromForm();
-        $("draft").innerHTML = sanitizeHtml(
-          input.point.trim() && input.competencies.length
-            ? buildStory(input)
-            : "",
-        );
-      }
-
-      // Trigger words per competency, drawn from the knowledge base (S05, S11, S12). Hints only: the user decides.
-      // A leading "~" marks a generic word, which counts half as much as a specific one.
-      const COMPETENCY_HINTS = {
-        OWN: [
-          "ownership",
-          "\\bowned\\b",
-          "owner of",
-          "accountab",
-          "end-to-end",
-          "start to finish",
-          "took over",
-          "sign-off",
-          "on-call",
-          "~follow-up",
-          "~\\bmaintain",
-          "~\\bdrove",
-        ],
-        DOM: [
-          "domain",
-          "business rule",
-          "regulat",
-          "compliance",
-          "user journey",
-          "acceptance criteria",
-          "~requirement",
-          "~customer",
-          "~workflow",
-          "~specification",
-        ],
-        TST: [
-          "exploratory",
-          "regression",
-          "test case",
-          "test design",
-          "test coverage",
-          "boundary",
-          "edge case",
-          "negative test",
-          "smoke",
-          "risk-based",
-          "~\\bcoverage",
-        ],
-        BUG: [
-          "\\bbug",
-          "defect",
-          "root cause",
-          "triage",
-          "severity",
-          "reproduc",
-          "incident",
-          "escaped",
-        ],
-        TPS: [
-          "test plan",
-          "test strategy",
-          "entry criteria",
-          "exit criteria",
-          "test approach",
-          "~strategy",
-          "~\\bscope",
-          "~\\brisk",
-          "~prioriti",
-          "~estimat",
-        ],
-        COM: [
-          "stakeholder",
-          "cross-team",
-          "collaborat",
-          "\\bdemo",
-          "workshop",
-          "walkthrough",
-          "knowledge transfer",
-          "~hand-?off",
-          "~\\balign",
-          "~present",
-        ],
-        TLS: [
-          "playwright",
-          "selenium",
-          "cypress",
-          "postman",
-          "\\bjira",
-          "jmeter",
-          "\\bk6\\b",
-          "~\\btool",
-          "~template",
-          "~plugin",
-          "~librar",
-          "~configur",
-        ],
-        PSC: [
-          "diagnos",
-          "bottleneck",
-          "trade-?off",
-          "root-cause analysis",
-          "~investigat",
-          "~debug",
-          "~hypothes",
-          "~analy[sz]",
-          "~optimi[sz]",
-        ],
-        AUT: [
-          "test automation",
-          "automated (test|check|suite)",
-          "\\bscript",
-          "\\be2e\\b",
-          "test suite",
-          "framework",
-          "page object",
-          "api test",
-          "~automat",
-          "~\\bbot\\b",
-        ],
-        LDR: [
-          "mentor",
-          "coach",
-          "onboard",
-          "\\btrain",
-          "\\bled\\b",
-          "\\bleading\\b",
-          "tech lead",
-          "guided",
-          "adopted by",
-          "team adopted",
-          "upskill",
-          "knowledge transfer",
-          "~\\badopt",
-          "~\\bpair",
-          "~guideline",
-        ],
-        LRN: [
-          "\\bai\\b",
-          "copilot",
-          "\\bllm",
-          "prototype",
-          "\\bpoc\\b",
-          "proof of concept",
-          "innovat",
-          "experiment",
-          "\\bspike",
-          "~research",
-          "~\\btrial",
-          "~certif",
-        ],
-        CID: [
-          "ci/cd",
-          "\\bci\\b",
-          "github actions",
-          "jenkins",
-          "azure devops",
-          "devops",
-          "docker",
-          "pipeline",
-          "~deploy",
-          "~\\bgate",
-          "~release",
-        ],
-      };
-
-      // Each hint carries its weight: 2 for specific words, 1 for generic ones. Matches return the whole word.
-      const hintsFor = (code) =>
-        (COMPETENCY_HINTS[code] || []).map((source) => ({
-          re: new RegExp(`[\\w-]*(?:${source.replace(/^~/, "")})[\\w-]*`),
-          weight: source.startsWith("~") ? 1 : 2,
-        }));
-
-      // Title and problem are the strongest signals, so they are kept apart from the rest.
-      function suggestionFields() {
-        const lower = (parts) => parts.join(" ").toLowerCase();
-        return {
-          primary: lower([$("point").value, $("problem").value]),
-          secondary: lower([
-            htmlToText(getDescriptionHtml()),
-            $("consequence").value,
-            $("before").value,
-            $("after").value,
-            $("method").value,
-          ]),
-        };
-      }
-
-      const SUGGESTION_CAP = 5;
-
-      // Scores each competency from its hints; a score of 2 or more is needed, and critical tiers win ties.
-      function rankCompetencies({ primary, secondary }) {
-        const tierRank = (code) =>
-          TIERS.findIndex((t) => t.key === tierOf(code));
-        return COMPETENCIES.map((c) => {
-          const words = [];
-          let score = 0;
-          for (const hint of hintsFor(c.code)) {
-            const inPrimary = primary.match(hint.re);
-            const inSecondary = secondary.match(hint.re);
-            const fieldWeight = inPrimary ? 2 : inSecondary ? 1 : 0;
-            if (!fieldWeight) continue;
-            score += hint.weight * fieldWeight;
-            words.push((inPrimary || inSecondary)[0].trim());
-          }
-          return { code: c.code, words, score };
-        })
-          .filter((hit) => hit.score >= 2)
-          .sort(
-            (a, b) => b.score - a.score || tierRank(a.code) - tierRank(b.code),
-          )
-          .slice(0, SUGGESTION_CAP);
-      }
-
-      function suggestCompetencies() {
-        const fields = suggestionFields();
-        if (!fields.primary.trim() && !fields.secondary.trim()) {
-          showNote(
-            "suggestNote",
-            "Add the artifact name or a description first.",
-            true,
-          );
-          return;
-        }
-        const hits = rankCompetencies(fields);
-        if (!hits.length) {
-          showNote(
-            "suggestNote",
-            "No matches. Add more detail on what you did, then try again.",
-            true,
-          );
-          return;
-        }
-        hits.forEach((hit) => {
-          const box = document.querySelector(
-            `input[name="competency"][value="${hit.code}"]`,
-          );
-          if (box) box.checked = true;
-        });
-        updateDraft();
-        showNote(
-          "suggestNote",
-          `Suggested from your text: ${hits
-            .map((hit) => `${nameOf(hit.code)} (${hit.words.join(", ")})`)
-            .join("; ")}. Untick anything you cannot prove.`,
-        );
-        showToast("Check every suggestion before you save.");
       }
 
       async function copyForAgent() {
@@ -3251,10 +3389,6 @@
         } catch {
           showToast("Copy failed. Allow clipboard access and try again.");
         }
-      }
-
-      function setDraftEdited(edited) {
-        state.draftEdited = edited;
       }
 
       function showFormError(message) {
@@ -3497,8 +3631,8 @@
         ).length;
         $("coverageTitle").textContent = `${state.level} coverage`;
         $("coverageSummary").textContent = critical.length
-          ? `Critical covered: ${criticalCovered} of ${critical.length}. Overall covered: ${totalCovered} of ${COMPETENCIES.length}.`
-          : `No tier matrix for ${state.level} in the knowledge base. Overall covered: ${totalCovered} of ${COMPETENCIES.length}.`;
+          ? `Critical competencies covered: ${criticalCovered} of ${critical.length}. Overall, ${totalCovered} of ${COMPETENCIES.length} competencies have at least one artifact for ${state.level}. Cover the critical ones first.`
+          : `No tier matrix for ${state.level} in the knowledge base. Overall, ${totalCovered} of ${COMPETENCIES.length} competencies have at least one artifact for ${state.level}.`;
 
         const tierRank = (code) => {
           const index = TIERS.findIndex((t) => t.key === tierOf(code));
@@ -3509,17 +3643,21 @@
           .map((c) => {
             const count = counts[c.code];
             const tier = tierOf(c.code);
-            const isGap = tier === "critical" && count === 0;
             return `
-        <div class="cov-tile${isGap ? " is-gap" : ""}${count > 0 ? " has-evidence" : ""}" style="${compVars(c.code)}">
-          <p class="cov-name">${esc(c.name)}</p>
-          <div class="cov-meta">
+        <button type="button" class="cov-tile${count === 0 ? " is-empty" : " has-evidence"}${state.activeCompetency === c.code ? " is-active" : ""}" data-comp="${esc(c.code)}" aria-pressed="${state.activeCompetency === c.code}" style="${compVars(c.code)}">
+          <span class="cov-name">${esc(c.name)}</span>
+          <span class="cov-meta">
             ${tier === "untiered" ? "" : `<span class="tier tier-${tier}">${tier}</span>`}
-            <span>${count === 0 ? "No evidence yet" : `${count} claim${count === 1 ? "" : "s"}`}</span>
-          </div>
-        </div>`;
+            <span>${count === 0 ? "No evidence yet" : `You have ${count} artifact${count === 1 ? "" : "s"}`}</span>
+          </span>
+        </button>`;
           })
           .join("");
+        $("coverageGrid").classList.toggle(
+          "has-active",
+          Boolean(state.activeCompetency),
+        );
+        $("coverageShowAllBtn").hidden = !state.activeCompetency;
       }
 
       function monthLabel(value) {
@@ -3603,60 +3741,180 @@
           .join("")}</dl>`;
       }
 
+      function setActiveCompetency(code) {
+        state.activeCompetency = state.activeCompetency === code ? null : code;
+        renderCoverage();
+        renderClaims();
+      }
+
       function renderClaims() {
-        const claims = levelClaims();
-        $("claimCount").textContent = claims.length;
+        renderSuggestions();
+        const all = levelClaims();
+        $("claimCount").textContent = all.length;
+        const active = state.activeCompetency;
+        const claims = active
+          ? all.filter((claim) => claim.competencies.includes(active))
+          : all;
+        const filterHtml = active
+          ? `<div class="comp-filter"><span>Tagged <strong>${esc(nameOf(active))}</strong>: ${claims.length}</span></div>`
+          : "";
 
         if (!claims.length) {
+          const emptyText = active
+            ? "No artifacts tagged with this competency yet."
+            : state.dataFile
+              ? `No ${esc(state.level)} artifacts yet. Add an artifact to start.`
+              : "Select the page's folder (top of the page) to start saving artifacts.";
           $("claimList").innerHTML =
-            `<p class="empty">${state.dataFile ? `No ${esc(state.level)} artifacts yet. Add an artifact to start.` : "Select the page's folder (top of the page) to start saving artifacts."}</p>`;
+            `${filterHtml}<p class="empty">${emptyText}</p>`;
+          $("toggleAllBtn").hidden = true;
           return;
         }
 
-        $("claimList").innerHTML = claims
-          .map((claim) => {
-            const expanded = state.expandedClaims.has(claim.id);
-            return `
+        const allExpanded = claims.every((claim) =>
+          state.expandedClaims.has(claim.id),
+        );
+        const toggleAll = $("toggleAllBtn");
+        toggleAll.hidden = false;
+        toggleAll.textContent = allExpanded ? "Collapse all" : "Expand all";
+        toggleAll.dataset.toggleAll = allExpanded ? "collapse" : "expand";
+
+        $("claimList").innerHTML =
+          filterHtml +
+          claims
+            .map((claim) => {
+              const expanded = state.expandedClaims.has(claim.id);
+              const linkCount = claim.links.length;
+              return `
       <article class="claim" data-claim-id="${esc(claim.id)}">
-        <p class="claim-text">${esc(claim.point)}</p>
-        <div class="tag-row">
-          ${isDraft(claim) ? '<span class="comp-tag draft-tag">Draft: not in coverage or exports</span>' : ""}
-          ${isDraft(claim) && !claim.competencies.length ? '<span class="comp-tag warn-tag">No competencies</span>' : ""}
-          ${claim.competencies.map((code) => `<span class="comp-tag" style="${compVars(code)}"><i class="dot"></i>${esc(nameOf(code))}</span>`).join("")}
-          ${PROOF_STATUS[claim.proofStatus] ? `<span class="comp-tag">${esc(PROOF_STATUS[claim.proofStatus])}</span>` : ""}
-          ${claimIssues(claim)
-            .map(
-              (issue) => `<span class="comp-tag warn-tag">${esc(issue)}</span>`,
-            )
-            .join("")}
-        </div>
-        ${impactListHtml(claim)}
-        ${claimImagesHtml(claim)}
-        ${flowHtml(claim.flow)}
-        ${
-          claim.claim || claim.description
-            ? `
-          <button type="button" class="btn btn-ghost btn-small claim-toggle" data-toggle-claim="${esc(claim.id)}" aria-expanded="${expanded}">
-            ${expanded ? "Hide description" : "Show description"}
-          </button>
-          <div class="claim-description" ${expanded ? "" : "hidden"}>${claim.claim ? `<dl class="impact-list"><dt>Claim story</dt><dd>${sanitizeHtml(claim.claim)}</dd></dl>` : ""}${claim.description ? sanitizeHtml(claim.description) : ""}</div>`
-            : ""
-        }
-        ${claim.links.length ? `<div class="link-list">${claim.links.map(renderLinkAnchor).join("")}</div>` : ""}
-        <div class="claim-actions">
+        <div class="claim-head">
           <span class="drag-handle" draggable="true" data-drag-claim="${esc(claim.id)}" title="Drag to reorder" aria-hidden="true"></span>
-          <button type="button" class="btn btn-ghost btn-small" data-edit-claim="${esc(claim.id)}">Edit</button>
-          <button type="button" class="btn btn-ghost btn-danger-ghost btn-small" data-delete-claim="${esc(claim.id)}">Delete</button>
+          <button type="button" class="claim-title" data-toggle-claim="${esc(claim.id)}" aria-expanded="${expanded}">
+            <span class="claim-title-text">${esc(claim.point)}</span>
+            <svg class="claim-chevron" viewBox="0 0 24 24" aria-hidden="true"><path d="m6 9 6 6 6-6"/></svg>
+          </button>
+        </div>
+        <div class="tag-row">
+          ${claim.competencies.map((code) => `<span class="comp-tag" style="${compVars(code)}"><i class="dot"></i>${esc(nameOf(code))}</span>`).join("")}
+        </div>
+        <div class="claim-details" ${expanded ? "" : "hidden"}>
+          ${linkCount ? `<div class="link-list">${claim.links.map((link) => `<div class="link-item"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71"/><path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71"/></svg>${renderLinkAnchor(link)}</div>`).join("")}</div>` : ""}
+          <div class="claim-description">
+            <div class="tag-row">
+              ${isDraft(claim) ? '<span class="comp-tag draft-tag">Draft: not in coverage or exports</span>' : ""}
+              ${isDraft(claim) && !claim.competencies.length ? '<span class="comp-tag warn-tag">No competencies</span>' : ""}
+              ${PROOF_STATUS[claim.proofStatus] ? `<span class="comp-tag">${esc(PROOF_STATUS[claim.proofStatus])}</span>` : ""}
+              ${claimIssues(claim)
+                .map(
+                  (issue) =>
+                    `<span class="comp-tag warn-tag">${esc(issue)}</span>`,
+                )
+                .join("")}
+            </div>
+            ${impactListHtml(claim)}
+            ${claim.claim ? `<dl class="impact-list"><dt>Claim story</dt><dd>${sanitizeHtml(claim.claim)}</dd></dl>` : ""}
+            ${claim.description ? `<dl class="impact-list"><dt>Description</dt><dd>${sanitizeHtml(claim.description)}</dd></dl>` : ""}
+          </div>
+          ${claimImagesHtml(claim)}
+          ${flowHtml(claim.flow)}
+          <div class="claim-actions">
+            <button type="button" class="btn btn-ghost btn-small" data-edit-claim="${esc(claim.id)}">Edit</button>
+            <button type="button" class="btn btn-ghost btn-danger-ghost btn-small" data-delete-claim="${esc(claim.id)}">Delete</button>
+          </div>
         </div>
       </article>`;
-          })
-          .join("");
+            })
+            .join("");
+      }
+
+      function inlineMarkdown(text) {
+        return text
+          .replace(/\*\*(.+?)\*\*/g, "<strong>$1</strong>")
+          .replace(/`([^`]+)`/g, "<code>$1</code>");
+      }
+
+      // Escapes first, then converts a small markdown subset to HTML.
+      function renderSuggestionText(value) {
+        const out = [];
+        let list = null;
+        esc(value)
+          .split(/\r?\n/)
+          .forEach((raw) => {
+            const line = raw.trimEnd();
+            const bullet = line.match(/^\s*[-*]\s+(.*)$/);
+            const numbered = line.match(/^\s*\d+[.)]\s+(.*)$/);
+            const item = bullet || numbered;
+            if (item) {
+              const tag = bullet ? "ul" : "ol";
+              if (list !== tag) {
+                if (list) out.push(`</${list}>`);
+                out.push(`<${tag}>`);
+                list = tag;
+              }
+              out.push(`<li>${inlineMarkdown(item[1])}</li>`);
+              return;
+            }
+            if (list) {
+              out.push(`</${list}>`);
+              list = null;
+            }
+            if (!line.trim()) return;
+            const heading = line.match(/^#{1,6}\s+(.*)$/);
+            out.push(
+              heading
+                ? `<p class="suggestion-head">${inlineMarkdown(heading[1])}</p>`
+                : `<p>${inlineMarkdown(line)}</p>`,
+            );
+          });
+        if (list) out.push(`</${list}>`);
+        return out.join("");
+      }
+
+      function renderSuggestions() {
+        const claims = levelClaims().filter((claim) => claim.agentSuggestion);
+        $("suggestionCount").textContent = claims.length;
+        $("suggestionList").innerHTML = claims.length
+          ? claims
+              .map(
+                (claim) => `
+      <article class="claim">
+        <h3 class="claim-title-text">${esc(claim.point)}</h3>
+        <div class="tag-row">
+          ${claim.competencies.map((code) => `<span class="comp-tag" style="${compVars(code)}"><i class="dot"></i>${esc(nameOf(code))}</span>`).join("")}
+        </div>
+        <div class="suggestion-text">${renderSuggestionText(claim.agentSuggestion)}</div>
+        <div class="claim-actions">
+          <button type="button" class="btn btn-ghost btn-small" data-edit-suggestion="${esc(claim.id)}">Edit artifact</button>
+        </div>
+      </article>`,
+              )
+              .join("")
+          : '<p class="empty">No AI suggestions yet. Paste the agent reply into AI suggestion on an artifact.</p>';
       }
 
       function openFormSections() {
         document.querySelectorAll(".form-section").forEach((section) => {
           section.open = true;
         });
+      }
+
+      function formSections() {
+        return document.querySelectorAll("#formCard .form-section");
+      }
+
+      function syncFormToggleLabel() {
+        const allOpen = [...formSections()].every((section) => section.open);
+        $("formToggleAllBtn").textContent = allOpen
+          ? "Collapse all"
+          : "Expand all";
+      }
+
+      function toggleFormSections() {
+        const expand = ![...formSections()].every((section) => section.open);
+        formSections().forEach((section) => {
+          section.open = expand;
+        });
+        syncFormToggleLabel();
       }
 
       function resetForm() {
@@ -3676,12 +3934,8 @@
         clearTimeout(autosaveTimer);
         autosaveDirty = false;
         fillEvidenceFields();
+        $("agentSuggestion").value = "";
         showFormError("");
-        showNote(
-          "suggestNote",
-          "Select every competency this artifact touches.",
-        );
-        setDraftEdited(false);
         setEditing(null);
         renderLinks();
         renderImages();
@@ -3741,6 +3995,7 @@
           images: [...state.images],
           flow: [...state.flow],
           ...readEvidenceFields(),
+          agentSuggestion: $("agentSuggestion").value.trim(),
           status: keepReady ? "ready" : "draft",
           level: state.level,
           createdAt: existing?.createdAt || new Date().toISOString(),
@@ -3792,6 +4047,7 @@
           images: [...state.images],
           flow: [...state.flow],
           ...readEvidenceFields(),
+          agentSuggestion: $("agentSuggestion").value.trim(),
           status: "ready",
           level: state.level,
           createdAt: new Date().toISOString(),
@@ -3825,6 +4081,7 @@
             input.checked = claim.competencies.includes(input.value);
           });
         fillEvidenceFields(claim);
+        $("agentSuggestion").value = claim.agentSuggestion || "";
         state.links = claim.links.map(asLink);
         // Drops file-path entries left by exports; they cannot be displayed and block the 6-image cap.
         state.images = (claim.images || []).filter((src) =>
@@ -3835,18 +4092,6 @@
         $("linkLabel").value = "";
         $("draft").innerHTML = sanitizeHtml(claim.claim || "");
         showFormError("");
-        setDraftEdited(
-          htmlToText(claim.claim || "") !==
-            htmlToText(
-              buildStory({
-                point: claim.point,
-                problem: claim.problem,
-                description: claim.description,
-                consequence: claim.consequence,
-                competencies: claim.competencies,
-              }),
-            ),
-        );
         setEditing(id);
         openFormSections();
         renderLinks();
@@ -3868,6 +4113,17 @@
       function toggleClaimDetails(id) {
         if (state.expandedClaims.has(id)) state.expandedClaims.delete(id);
         else state.expandedClaims.add(id);
+        renderClaims();
+      }
+
+      function toggleAllClaims(expand) {
+        const active = state.activeCompetency;
+        levelClaims()
+          .filter((claim) => !active || claim.competencies.includes(active))
+          .forEach((claim) => {
+            if (expand) state.expandedClaims.add(claim.id);
+            else state.expandedClaims.delete(claim.id);
+          });
         renderClaims();
       }
 
@@ -4029,14 +4285,15 @@
 
       // ---- HTML deck export: index.html + styles.css + data.json + images/ ----
 
-      const DECK_CSS = `:root{--bg:#f3ecdd;--surface:#fffdf7;--surface-alt:#f8f2e5;--border:#e5d9c2;--text:#141413;--muted:#73726c;--primary:#c6613f;--primary-soft:#f8e9e1;--font:Figtree,"Segoe UI",system-ui,sans-serif;--serif:Newsreader,Georgia,"Times New Roman",serif}
+      const DECK_CSS = `:root{--bg:#f3ecdd;--surface:#fffdf7;--surface-alt:#f8f2e5;--border:#e5d9c2;--text:#141413;--muted:#73726c;--primary:#c6613f;--primary-soft:#f8e9e1;--font:Candara,"Segoe UI",system-ui,sans-serif;--serif:Newsreader,Georgia,"Times New Roman",serif}
 *{box-sizing:border-box;margin:0;padding:0}
 html,body{height:100%;background:var(--bg);color:var(--text);font-family:var(--font)}
 body{display:grid;place-items:center;overflow:hidden}
-.stage{container-type:size;width:min(100vw,calc(100vh * 16 / 9));aspect-ratio:16/9;background:var(--surface);position:relative;box-shadow:0 12px 40px rgba(86,60,30,.14);overflow:hidden}
+.stage{container-type:size;width:min(100vw,calc(100vh * 16 / 9));aspect-ratio:16/9;background:radial-gradient(ellipse at 25% 15%,rgba(255,255,255,.6),transparent 60%),radial-gradient(ellipse at 85% 100%,rgba(176,140,90,.10),transparent 55%),url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='220' height='220'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='.65' numOctaves='4' stitchTiles='stitch'/%3E%3CfeColorMatrix values='0 0 0 0 .42 0 0 0 0 .33 0 0 0 0 .2 0 0 0 .06 0'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E"),#fbf7ec;position:relative;box-shadow:0 12px 40px rgba(86,60,30,.14);overflow:hidden}
 .slide{position:absolute;inset:0;padding:5cqw;display:flex;flex-direction:column;gap:2cqw}
 .slide[hidden]{display:none}
-.kicker{display:flex;align-items:center;gap:.7cqw;font-size:1.05cqw;font-weight:600;letter-spacing:.14em;text-transform:uppercase;color:var(--muted)}
+.slide:not([hidden]){animation:slideIn .45s ease both}
+@keyframes slideIn{from{opacity:0;transform:translateY(.8cqw)}to{opacity:1;transform:none}}display:flex;align-items:center;gap:.7cqw;font-size:1.05cqw;font-weight:600;letter-spacing:.14em;text-transform:uppercase;color:var(--muted)}
 .kicker::before{content:"";width:.5cqw;height:.5cqw;border-radius:50%;background:var(--primary)}
 h1,h2{font-family:var(--serif);font-weight:700}
 h1{font-size:5.7cqw;line-height:1.05}
@@ -4061,7 +4318,7 @@ h2{font-size:2.6cqw;line-height:1.2}
 .col>*{flex:none}
 .point{margin-top:-.9cqw;font-size:2cqw;line-height:1.2;padding-bottom:.8cqw;border-bottom:1px solid var(--border)}
 .tags{display:flex;flex-wrap:wrap;gap:.7cqw}
-.tag{display:inline-flex;align-items:center;gap:.5cqw;border:1px solid var(--c-bd,var(--border));background:var(--c-bg,var(--surface-alt));color:var(--c-tx,var(--text));border-radius:99cqw;padding:.3cqw .8cqw;font-size:.82cqw;font-weight:600}
+.tag{display:inline-flex;align-items:center;gap:.5cqw;border:1px solid var(--c-bd,var(--border));background:var(--c-bg,var(--surface-alt));color:var(--c-tx,var(--text));border-radius:99cqw;padding:.3cqw .8cqw;font-size:1cqw;font-weight:600}
 .tag .dot{width:.55cqw;height:.55cqw;border-radius:50%;background:var(--c-solid)}
 .links{display:flex;flex-wrap:wrap;align-items:center;gap:.5cqw 1.8cqw;font-size:1.05cqw}
 .links a{display:flex;align-items:baseline;gap:.6cqw;color:var(--primary);overflow-wrap:anywhere}
@@ -4070,14 +4327,15 @@ h2{font-size:2.6cqw;line-height:1.2}
 .figure>div{min-width:0;display:flex;flex-direction:column;gap:.3cqw}.figure b{display:block;font:700 1.5cqw/1.25 var(--serif);overflow-wrap:break-word}
 .figure span{font-size:1.045cqw;color:var(--muted);text-transform:uppercase;letter-spacing:.1em;font-weight:600}
 .figure .arrow{align-self:center;font-style:normal;font-size:2.28cqw;color:var(--primary)}
-.rows{display:grid;grid-template-columns:max-content 1fr;gap:0 2cqw;font-size:1.1cqw;line-height:1.4;overflow:auto}
+.rows{display:grid;grid-template-columns:max-content 1fr;gap:0 2cqw;font-size:1.1cqw;line-height:1.4;overflow:auto;color:var(--text)}
 .rows dt,.rows dd{padding:.6cqw 0;border-bottom:1px solid var(--border)}
-.rows dt{color:var(--muted);font-weight:600}
-.prose{font-size:1.25cqw;line-height:1.5;max-width:none;margin-top:.6cqw}
+.rows dt{color:var(--text);font-weight:700}
+.prose{font-size:1.25cqw;line-height:1.5;max-width:none;margin-top:.6cqw;color:var(--text)}
 .prose ul,.prose ol{padding-left:1.8cqw;margin:.4cqw 0}
 .lbl{display:flex;align-items:center;gap:.6cqw;font-size:.97cqw;font-weight:600;letter-spacing:.12em;text-transform:uppercase;color:var(--muted)}
 .lbl::before{content:"";width:.9cqw;height:.18cqw;border-radius:1cqw;background:var(--primary)}
 .prose .lbl{margin-bottom:.5cqw}
+.lbl.dark{color:var(--text);font-size:1.3cqw}
 .prose a{color:var(--primary)}
 .flow{display:flex;flex-wrap:wrap;align-items:center;gap:.6cqw;font-size:1cqw}
 .flow span{border:1px solid var(--border);background:var(--surface-alt);border-radius:.7cqw;padding:.35cqw .8cqw}
@@ -4091,9 +4349,10 @@ h2{font-size:2.6cqw;line-height:1.2}
 .thumb img{width:100%;height:100%;object-fit:cover;display:block}
 .thumb:hover{border-color:var(--primary)}
 .thumb:focus-visible,.z-arrow:focus-visible,.nav button:focus-visible{outline:3px solid var(--primary-soft);border-color:var(--primary)}
-.nav{position:absolute;right:2cqw;bottom:1.4cqw;display:flex;gap:.8cqw;align-items:center;font-size:1.092cqw;color:var(--muted)}
-.count{position:absolute;right:2cqw;top:1.4cqw;font-size:1.092cqw;color:var(--muted)}
-.nav button{border:1px solid var(--border);background:var(--surface);border-radius:.8cqw;padding:.35cqw 1cqw;font:inherit;color:var(--text);cursor:pointer}
+.nav{position:absolute;right:2cqw;top:1.2cqw;display:flex;gap:.8cqw;align-items:center;font-size:1.092cqw;color:var(--muted)}
+.count{margin-left:.4cqw}
+.nav button{border:1px solid var(--border);background:var(--surface);border-radius:.8cqw;padding:.35cqw 1cqw;font:inherit;color:var(--text);cursor:pointer;transition:background .15s,border-color .15s,color .15s}
+.nav button:hover{background:var(--primary-soft);border-color:var(--primary);color:var(--primary)}
 .bar{position:absolute;left:0;bottom:0;height:.35cqw;background:var(--primary);transition:width .2s}
 .zoom{position:fixed;inset:0;background:rgba(20,20,19,.92);display:grid;place-items:center;z-index:9;cursor:zoom-out}
 .zoom[hidden]{display:none}.zoom:not([hidden]){animation:zfade .25s ease}@keyframes zfade{from{opacity:0}to{opacity:1}}@keyframes zswap{from{opacity:0;transform:scale(.98)}to{opacity:1;transform:none}}@media (prefers-reduced-motion:reduce){.zoom,.zoom img{animation:none!important}}
@@ -4104,13 +4363,11 @@ h2{font-size:2.6cqw;line-height:1.2}
 .z-count{position:absolute;bottom:2vh;left:0;right:0;text-align:center;color:#fff;font-size:13.3px}
 .zoom.one .z-arrow,.zoom.one .z-count{display:none}
 @page{size:297mm 167mm;margin:0}
-@page{size:landscape;margin:0}@media print{body{display:block;overflow:visible;height:auto;background:#fff}.stage{container-type:inline-size;width:100%;height:auto;aspect-ratio:auto;box-shadow:none;overflow:visible}.slide,.slide[hidden]{position:relative;display:flex;aspect-ratio:16/9;break-after:page;overflow:hidden}.nav,.count,.bar,.zoom,.z-arrow{display:none}}`;
+@page{size:landscape;margin:0}@media print{body{display:block;overflow:visible;height:auto;background:#fff}.stage{container-type:inline-size;width:100%;height:auto;aspect-ratio:auto;box-shadow:none;overflow:visible}.slide,.slide[hidden]{position:relative;display:flex;aspect-ratio:16/9;break-after:page;overflow:hidden}.nav,.count,.bar,.zoom,.z-arrow{display:none}.slide{animation:none}}`;
 
       const DECK_JS = `(function(){var slides=[].slice.call(document.querySelectorAll('.slide')),i=0,bar=document.getElementById('bar'),count=document.getElementById('count'),zoom=document.getElementById('zoom'),zimg=zoom.querySelector('img'),zcount=document.getElementById('zcount'),zs=[],zi=0;
 function go(n){i=Math.max(0,Math.min(slides.length-1,n));slides.forEach(function(s,k){s.hidden=k!==i});bar.style.width=((i+1)/slides.length*100)+'%';count.textContent=(i+1)+' / '+slides.length;try{location.hash=String(i+1)}catch(e){}}
 function closeZoom(){zoom.hidden=true}
-document.getElementById('prev').onclick=function(){go(i-1)};
-document.getElementById('next').onclick=function(){go(i+1)};
 document.getElementById('toc').onclick=function(){go(1)};
 document.addEventListener('keydown',function(e){var k=e.key;if(!zoom.hidden){if(k==='ArrowRight')zshow(zi+1);else if(k==='ArrowLeft')zshow(zi-1);else if(k==='Escape')closeZoom();return}if(k==='ArrowRight'||k==='PageDown'||k===' '){e.preventDefault();go(i+1)}else if(k==='ArrowLeft'||k==='PageUp'){go(i-1)}else if(k==='Home'){go(0)}else if(k==='End'){go(slides.length-1)}});
 function zshow(n){zi=(n+zs.length)%zs.length;zimg.classList.remove('swap');void zimg.offsetWidth;zimg.classList.add('swap');zimg.src=zs[zi].src;zimg.alt=zs[zi].alt;zcount.textContent=(zi+1)+' / '+zs.length;zoom.classList.toggle('one',zs.length<2)}
@@ -4149,7 +4406,7 @@ go((parseInt(location.hash.slice(1),10)||1)-1);})();`;
       }
 
       // shots maps claim id to relative image paths already written to images/.
-      function deckHtml(claims, shots) {
+      function deckHtml(claims, shots, withStory = false) {
         const { name, project } = state.candidate;
         const now = new Date();
         const tag = (code) =>
@@ -4223,15 +4480,23 @@ go((parseInt(location.hash.slice(1),10)||1)-1);})();`;
     <div class="col">
       <div class="tags">${claim.competencies.map(tag).join("")}</div>
       ${links ? `<div class="links">${links}</div>` : ""}
-      ${claim.description ? `<div class="prose"><div class="lbl">Description</div>${sanitizeHtml(claim.description)}</div>` : ""}
+      ${claim.description ? `<div class="prose"><div class="lbl dark">Description</div>${sanitizeHtml(claim.description)}</div>` : ""}
     </div>
     <div class="col">
       ${figure}
-      ${rows.length ? `<dl class="rows">${rows.map(([key, value]) => `<dt>${esc(key)}</dt><dd>${esc(value)}</dd>`).join("")}</dl>` : ""}
+      ${rows.length ? `<div class="lbl dark">Impacts</div><dl class="rows">${rows.map(([key, value]) => `<dt>${esc(key)}</dt><dd>${esc(value)}</dd>`).join("")}</dl>` : ""}
       ${steps.length ? `<div class="flow">${steps.map((s) => `<span>${esc(s)}</span>`).join("<i>→</i>")}</div>` : ""}
     </div>
   </div>
 </section>`);
+          if (withStory && htmlToText(claim.claim || "")) {
+            slides.push(`<section class="slide">
+  <span class="kicker">${esc(label)} · Claim story</span>
+  <h2 class="point">${esc(claim.point)}</h2>
+  <div class="tags">${claim.competencies.map(tag).join("")}</div>
+  <div class="prose story"><div class="lbl dark">Claim story</div>${sanitizeHtml(claim.claim)}</div>
+</section>`);
+          }
           if (images.length) {
             slides.push(`<section class="slide">
   <span class="kicker">${esc(label)} · Evidence</span>
@@ -4259,7 +4524,7 @@ go((parseInt(location.hash.slice(1),10)||1)-1);})();`;
 <body>
 <main class="stage">
 ${slides.join("\n").replace("@@TOC@@", () => tocRows.join("") + (claims.length > TOC_LIMIT ? `<li class="more">and ${claims.length - TOC_LIMIT} more artifacts</li>` : ""))}
-<span class="count" id="count" aria-live="polite"></span><nav class="nav" aria-label="Slides"><button type="button" id="toc" aria-label="Back to contents">Contents</button><button type="button" id="prev" aria-label="Previous slide">&lt;</button><button type="button" id="next" aria-label="Next slide">&gt;</button></nav>
+<nav class="nav" aria-label="Slides"><button type="button" id="toc" aria-label="Back to contents">Contents</button><span class="count" id="count" aria-live="polite"></span></nav>
 <div class="bar" id="bar"></div>
 </main>
 <div class="zoom" id="zoom" hidden><button type="button" class="z-arrow" data-z="prev" aria-label="Previous screenshot">&#8249;</button><img alt=""><button type="button" class="z-arrow" data-z="next" aria-label="Next screenshot">&#8250;</button><span class="z-count" id="zcount"></span></div>
@@ -4276,7 +4541,7 @@ ${slides.join("\n").replace("@@TOC@@", () => tocRows.join("") + (claims.length >
         await writable.close();
       }
 
-      function deckPreviewHtml(claims) {
+      function deckPreviewHtml(claims, withStory) {
         return deckHtml(
           claims,
           Object.fromEntries(
@@ -4285,6 +4550,7 @@ ${slides.join("\n").replace("@@TOC@@", () => tocRows.join("") + (claims.length >
               (c.images || []).filter((src) => SAFE_IMAGE.test(src)),
             ]),
           ),
+          withStory,
         ).replace(
           '<link rel="stylesheet" href="styles.css">',
           () => `<style>${DECK_CSS}</style>`,
@@ -4385,7 +4651,11 @@ ${slides.join("\n").replace("@@TOC@@", () => tocRows.join("") + (claims.length >
             await writeDirFile(imageDir, path.slice(7), bytes);
           }
           await writeDirFile(dir, "styles.css", DECK_CSS);
-          await writeDirFile(dir, "index.html", deckHtml(claims, shots));
+          await writeDirFile(
+            dir,
+            "index.html",
+            deckHtml(claims, shots, $("storyToggle").checked),
+          );
           await writeDirFile(
             dir,
             "data.json",
@@ -4402,13 +4672,12 @@ ${slides.join("\n").replace("@@TOC@@", () => tocRows.join("") + (claims.length >
             ),
           );
           showToast(`Saved HTML slides ${folder}`);
-          const preview = deckPreviewHtml(claims);
+          const preview = deckPreviewHtml(claims, $("storyToggle").checked);
           if (state.deckUrl) URL.revokeObjectURL(state.deckUrl);
           state.deckUrl = URL.createObjectURL(
             new Blob([preview], { type: "text/html" }),
           );
-          $("deckOpenBtn").hidden = false;
-          // A popup blocker may refuse this after the folder picker; the button opens it instead.
+          // A popup blocker may refuse this after the folder picker.
           window.open(state.deckUrl, "_blank");
         } catch (error) {
           if (error.name === "AbortError") return;
@@ -4416,7 +4685,7 @@ ${slides.join("\n").replace("@@TOC@@", () => tocRows.join("") + (claims.length >
         }
       }
 
-      function buildPdf(claims) {
+      function buildPdf(claims, withStory = false) {
         const PAGE_W = 595;
         const PAGE_H = 842;
         const MARGIN = 48;
@@ -5042,34 +5311,7 @@ ${slides.join("\n").replace("@@TOC@@", () => tocRows.join("") + (claims.length >
             chips(
               claim.competencies.map((code) => ({ label: nameOf(code), code })),
             );
-            const rows = impactRows(claim).filter(
-              ([key]) => key !== "Proof strength",
-            );
-            if (rows.length) {
-              divider();
-              sectionHead("Impacts");
-              rows.forEach(([key, value]) => {
-                wrap(value, 10, "F1", width - 120).forEach((line, i) => {
-                  ensure(13.5);
-                  y -= 13.5;
-                  if (i === 0) put(key, left, y, 9, "F2", C.muted);
-                  put(line, left + 120, y, 10, "F1", C.text);
-                });
-                y -= 4;
-              });
-            }
-            if (htmlToText(claim.description || "")) {
-              divider();
-              sectionHead("Description");
-              writeRich(claim.description, { size: 10, lh: 1.35 });
-            }
-            if (htmlToText(claim.claim || "")) {
-              divider();
-              sectionHead("Claim Story");
-              writeRich(claim.claim, { size: 10, lh: 1.35 });
-            }
             if (claim.links.length) {
-              divider();
               sectionHead("Proof");
               claim.links.map(asLink).forEach(({ url, label }) => {
                 const target = /^https?:\/\//i.test(url) ? url : null;
@@ -5098,6 +5340,32 @@ ${slides.join("\n").replace("@@TOC@@", () => tocRows.join("") + (claims.length >
                   });
                 }
               });
+            }
+            const rows = impactRows(claim).filter(
+              ([key]) => key !== "Proof strength",
+            );
+            if (rows.length) {
+              divider();
+              sectionHead("Impacts");
+              rows.forEach(([key, value]) => {
+                wrap(value, 10, "F1", width - 120).forEach((line, i) => {
+                  ensure(13.5);
+                  y -= 13.5;
+                  if (i === 0) put(key, left, y, 9, "F2", C.muted);
+                  put(line, left + 120, y, 10, "F1", C.text);
+                });
+                y -= 4;
+              });
+            }
+            if (htmlToText(claim.description || "")) {
+              divider();
+              sectionHead("Description");
+              writeRich(claim.description, { size: 10, lh: 1.35 });
+            }
+            if (withStory && htmlToText(claim.claim || "")) {
+              divider();
+              sectionHead("Claim Story");
+              writeRich(claim.claim, { size: 10, lh: 1.35 });
             }
             const jpegs = (claim.images || []).filter(
               (src) =>
@@ -5303,7 +5571,7 @@ ${slides.join("\n").replace("@@TOC@@", () => tocRows.join("") + (claims.length >
         }
         let blob;
         try {
-          blob = buildPdf(claims);
+          blob = buildPdf(claims, $("storyToggle").checked);
         } catch (error) {
           showToast(`Could not build the PDF: ${error.message}`);
           return;
@@ -5572,7 +5840,20 @@ ${slides.join("\n").replace("@@TOC@@", () => tocRows.join("") + (claims.length >
         clearTimeout(toastTimer);
         toastTimer = setTimeout(
           () => toast.classList.remove("is-visible"),
-          3200,
+          isError ? 8000 : 3200,
+        );
+      }
+
+      let snackbarTimer;
+      function showAiSnackbar() {
+        const snackbar = $("aiSnackbar");
+        snackbar.textContent =
+          "AI can make mistakes, review the suggestion on your own risk.";
+        snackbar.classList.add("is-visible");
+        clearTimeout(snackbarTimer);
+        snackbarTimer = setTimeout(
+          () => snackbar.classList.remove("is-visible"),
+          4000,
         );
       }
 
@@ -5582,7 +5863,7 @@ ${slides.join("\n").replace("@@TOC@@", () => tocRows.join("") + (claims.length >
         $("candidateProject").value = state.candidate.project;
         updateStartEnabled();
         $("connNote").textContent =
-          `Connected. Saving to ${handle.name} (${n} artifact${n === 1 ? "" : "s"}). Hand edits reload when you return to this tab.`;
+          `Connected. Saving to ${handle.name} (${n} artifact${n === 1 ? "" : "s"}). Hand edits reload when you return to the app window.`;
         document.querySelector(".data-bar").classList.add("is-connected");
         $("backupBtn").hidden = false;
       }
@@ -5820,10 +6101,15 @@ ${slides.join("\n").replace("@@TOC@@", () => tocRows.join("") + (claims.length >
 
       function showView(view) {
         const howto = view === "howto";
-        document.querySelector(".layout").hidden = howto;
+        const suggestions = view === "suggestions";
+        const tagger = !howto && !suggestions;
+        document.querySelector(".layout").hidden = !tagger;
+        $("suggestionsView").hidden = !suggestions;
         $("howtoView").hidden = !howto;
-        $("tabTagger").setAttribute("aria-selected", String(view === "tagger"));
+        $("tabTagger").setAttribute("aria-selected", String(tagger));
+        $("tabSuggestions").setAttribute("aria-selected", String(suggestions));
         $("tabHowto").setAttribute("aria-selected", String(howto));
+        if (suggestions) showAiSnackbar();
       }
 
       function bindEvents() {
@@ -5839,18 +6125,15 @@ ${slides.join("\n").replace("@@TOC@@", () => tocRows.join("") + (claims.length >
           setLevel(event.target.value),
         );
 
-        $("point").addEventListener("input", updateDraft);
-        $("problem").addEventListener("input", updateDraft);
-        $("consequence").addEventListener("input", updateDraft);
-        $("description").addEventListener("input", updateDraft);
-
-        $("competencyPicker").addEventListener("change", updateDraft);
-
-        $("draft").addEventListener("input", () =>
-          setDraftEdited(htmlToText($("draft").innerHTML) !== ""),
-        );
-
         $("addLinkBtn").addEventListener("click", addLink);
+
+        $("coverageGrid").addEventListener("click", (event) => {
+          const tile = event.target.closest("[data-comp]");
+          if (tile) setActiveCompetency(tile.dataset.comp);
+        });
+        $("coverageShowAllBtn").addEventListener("click", () =>
+          setActiveCompetency(null),
+        );
 
         $("addImageBtn").addEventListener("click", () =>
           $("imageInput").click(),
@@ -5982,15 +6265,47 @@ ${slides.join("\n").replace("@@TOC@@", () => tocRows.join("") + (claims.length >
           selectFlowStep(step);
         });
         $("saveBtn").addEventListener("click", () => saveClaim());
-        $("suggestBtn").addEventListener("click", suggestCompetencies);
         $("agentBtn").addEventListener("click", copyForAgent);
-        $("clearBtn").addEventListener("click", resetForm);
-        $("pdfBtn").addEventListener("click", exportPdf);
-        $("mdBtn").addEventListener("click", exportMarkdown);
-        $("deckBtn").addEventListener("click", exportDeck);
-        $("deckOpenBtn").addEventListener("click", () => {
-          if (state.deckUrl) window.open(state.deckUrl, "_blank");
+        $("suggestionList").addEventListener("click", (event) => {
+          const id = event.target.closest("[data-edit-suggestion]")?.dataset
+            .editSuggestion;
+          if (!id) return;
+          showView("tagger");
+          editClaim(id);
         });
+        $("clearBtn").addEventListener("click", resetForm);
+        $("toggleAllBtn").addEventListener("click", (event) =>
+          toggleAllClaims(event.currentTarget.dataset.toggleAll === "expand"),
+        );
+        const exportBtn = $("exportBtn");
+        const exportMenu = $("exportMenu");
+        const setExportMenu = (open) => {
+          exportMenu.hidden = !open;
+          exportBtn.setAttribute("aria-expanded", String(open));
+        };
+        exportBtn.addEventListener("click", (event) => {
+          event.stopPropagation();
+          setExportMenu(exportMenu.hidden);
+        });
+        exportMenu.addEventListener("click", (event) => {
+          const item = event.target.closest("[data-export-format]");
+          if (!item) return;
+          const format = item.dataset.exportFormat;
+          setExportMenu(false);
+          if (format === "pdf") exportPdf();
+          else if (format === "md") exportMarkdown();
+          else exportDeck();
+        });
+        document.addEventListener("click", (event) => {
+          if (!event.target.closest(".export-menu")) setExportMenu(false);
+        });
+        document.addEventListener("keydown", (event) => {
+          if (event.key === "Escape") setExportMenu(false);
+        });
+        $("formToggleAllBtn").addEventListener("click", toggleFormSections);
+        formSections().forEach((section) =>
+          section.addEventListener("toggle", syncFormToggleLabel),
+        );
         $("formCard").addEventListener("input", scheduleAutosave);
         $("formCard").addEventListener("change", scheduleAutosave);
         document.addEventListener("visibilitychange", () => {
@@ -6043,7 +6358,17 @@ ${slides.join("\n").replace("@@TOC@@", () => tocRows.join("") + (claims.length >
 
         $("claimList").addEventListener("click", (event) => {
           const button = event.target.closest("button");
-          if (!button) return;
+          if (!button) {
+            const card = event.target.closest(".claim");
+            if (
+              !card ||
+              event.target.closest("a, .claim-details, .drag-handle")
+            )
+              return;
+            if (window.getSelection().toString()) return;
+            toggleClaimDetails(card.dataset.claimId);
+            return;
+          }
           if (button.dataset.editClaim !== undefined)
             editClaim(button.dataset.editClaim);
           if (button.dataset.deleteClaim !== undefined)

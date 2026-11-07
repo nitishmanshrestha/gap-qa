@@ -2,7 +2,11 @@
 
 A single-file tool that helps QA engineers organize, tag and export their achievements for a GAP promotion case.
 
-![GAP Handim tagger](images/app-screenshot.png)
+## Screenshots
+
+![Tagger page](images/GAP-handim-tagger.png)
+![Suggestions page](images/GAP-handim-suggestions.png)
+![How to page](images/GAP-handim-how-to.png)
 
 ## Who this is for
 
@@ -34,7 +38,7 @@ QA Chapter engineers preparing a GAP promotion case. Pick your target level in t
 
 1. Open `view/gap-handim-tagger.html` in Edge or Chrome.
 2. Enter the candidate name. Project is optional. Pick the target level. Each level shows only its own artifacts and coverage.
-3. Click **Start** and save or choose the suggested file, for example `your-name-l3.json`.
+3. Click **Create new file** and save the suggested file, for example `your-name-l3.json`. To load a file you already have, click **Open existing**.
 
 | If the file is   | Then                                   |
 | ---------------- | -------------------------------------- |
@@ -46,19 +50,19 @@ QA Chapter engineers preparing a GAP promotion case. Pick your target level in t
 
 1. Add an artifact and fill in the fields:
 
-| Field                                    | Required | Notes                                                                       |
-| ---------------------------------------- | -------- | --------------------------------------------------------------------------- |
-| Artifact, Problem it solved, Description | Yes      |                                                                             |
-| Competencies                             | Yes      | Tick what the work proves.                                                  |
-| Claim story                              | No       | Drafted from your fields. Edit it, or clear it to resume automatic updates. |
-| Impact                                   | No       | Before, after, and how it was measured.                                     |
-| Proof                                    | No       | Links, screenshots or a flow.                                               |
+| Field                                    | Required | Notes                                                                                      |
+| ---------------------------------------- | -------- | ------------------------------------------------------------------------------------------ |
+| Artifact, Problem it solved, Description | Yes      |                                                                                            |
+| Competencies                             | Yes      | Tick what the work proves.                                                                 |
+| Claim story                              | No       | Written by you. Map each ticked competency to the scenario behind it. Leave blank to skip. |
+| Impact                                   | No       | Before, after, and how it was measured.                                                    |
+| Proof                                    | No       | Links, screenshots or a flow.                                                              |
 
 2. Click **Save artifact**. Save is blocked until the required fields and one competency are filled. Red tiles in Coverage are critical competencies with no evidence yet.
 
-- **Short on time:** enter the name, the problem and a few words of description, then click **Suggest competency touched**. It ticks likely competencies by keyword match. Check each one.
 - **Agent drafts** are tagged Draft and stay out of Coverage, the HTML slides and the Markdown export until you edit them and click **Save artifact**.
 - **Copy for agent** copies the artifact for the `gap-artifact-polisher` agent (see below).
+- **AI suggestion**: paste the agent's reply here to keep it with the artifact. The **Suggestions** tab lists every reply. The app does not apply them: read each one, then edit the artifact yourself with **Edit artifact**. AI can make mistakes.
 
 ### Streamlining a long list
 
@@ -69,7 +73,7 @@ Keep only the strongest artifacts.
 
 ### Consolidating the output
 
-1. Click **Export HTML slides** and choose a parent folder, for example `source/`. The app creates a folder named `<name>_<level>_<mon>_<dd>_<hhmm>` (for example `your-name_le_nov_07_1432`) containing:
+1. Click **Export** and choose **HTML slides**. Pick a parent folder, for example `source/`. The app creates a folder named `<name>_<level>_<mon>_<dd>_<hhmm>` (for example `your-name_le_nov_07_1432`) containing:
 
 | File         | Contents                                                      |
 | ------------ | ------------------------------------------------------------- |
@@ -79,8 +83,8 @@ Keep only the strongest artifacts.
 | `images/`    | Your screenshots at full resolution.                          |
 
 2. Open `index.html`. The overview lists every artifact as a link, and the Contents button on each slide returns to it. Each artifact slide shows the claim story, figures, description, links and screenshot thumbnails together (a very long claim story moves to its own slide). Click a thumbnail to open a carousel of that artifact's screenshots. Use the arrow keys or the Prev and Next buttons, click a screenshot to enlarge it, and print from the browser for a PDF with one slide per page.
-3. Or click **Export Markdown** for a text pack. Files are named `<candidate>-<level>-evidence.md`.
-4. Both use all ready artifacts for the current level.
+3. Or click **Export** and choose **Markdown** for a text pack. Files are named `<candidate>-<level>-evidence.md`.
+4. Both use all ready artifacts for the current level. Tick **Include claim story in HTML slides and PDF** in the Export menu to include claim stories.
 
 The order you set by dragging is saved in your data file. It sets the artifact numbers in the HTML slides and the order of the Markdown export.
 
@@ -133,7 +137,7 @@ Both follow the same workflow and rules.
 - Competency, figure and proof suggestions are judgement calls based on your wording. Check them.
 - Accepts only `http` or `https` links, and does not open them.
 - Uses only the 12 competency codes in Appendix A.
-- `createdAt` is fixed to 2026-11-06, not the real date. To change it, edit the JSON and click **Reload**.
+- `createdAt` is fixed to 2026-11-06, not the real date. To change it, edit the JSON file in a text editor.
 - Your notes go to the assistant you use (Copilot or Claude). Do not paste confidential customer data.
 
 ### What the knowledge base covers
@@ -168,7 +172,7 @@ Use the `gap-artifact-polisher` agent in GitHub Copilot Chat or Claude Code to d
 2. Paste a document with one block per artifact: Point, Problem, Before, After, Consequence, Method (estimates only) and Proof.
 3. Complete any artifacts the agent lists as incomplete. It drafts the rest.
 4. Confirm the drafts. The agent writes `source/your-name-<level>.json` (for example `source/your-name-le.json`).
-5. In the app, click **Open existing** and choose that file. If it is already open, click **Reload**.
+5. In the app, click **Open existing** and choose that file. The app reloads the file automatically when it changes on disk.
 
 Draft mode is for unfinished artifacts. Paste the output of **Copy for agent** and say "draft" (the agent also uses it when required items are blank). The agent skips the required-items gate, saves the artifact with `status: draft`, ranks competencies with knowledge base references, offers wording, and asks one question per missing item. It never fills in numbers or proof.
 
@@ -181,18 +185,17 @@ Draft mode is for unfinished artifacts. Paste the output of **Copy for agent** a
 
 Check the suggestions in the review.
 
-## How suggestions and the claim story work
+## Competencies and claim story
 
-The app has no AI model. Both features are rule-based, run offline and send nothing anywhere.
+The app does not suggest competencies or write claim stories. You choose both.
 
-- **Suggest competency touched** searches the artifact name, description, problem, consequence, before, after and method for trigger words. Each competency has specific trigger words, for example "regression" for TST and "pipeline" for CID, and generic ones, for example "risk" for TPS. Matches in the artifact name or problem count double. A competency is ticked when it has a specific match, or a generic match in the name or problem. It ticks up to five, strongest first, and ties go to the critical tiers. Check each tick.
-- **Claim story** is built from the artifact name, problem, description, one sentence per ticked competency and the outcome. It updates as you type until you edit it. Clear the box to return to automatic updates. The empty box shows an example as placeholder text.
-- To change the trigger words, edit `COMPETENCY_HINTS` in `view/gap-handim-tagger.html`.
+- **Competencies touched**: tick only what the artifact proves. Most substantial artifacts touch four to six.
+- **Claim story** is optional and written by you. Map each ticked competency to the scenario behind it. Leave it blank to skip.
 
 ## Continuing with saved data
 
-- Open the app, click **Open existing** and choose your JSON file. If the app is already open, click **Reload**.
-- Edited the JSON by hand? Click **Reload**.
+- Click **Open existing** and choose your JSON file.
+- Edited the JSON by hand, or changed by the agent? The app reloads the file when you return to its window and shows "File changed outside the app". Review and save again.
 - Before big changes, click **Backup** to download a copy of your data file.
 - Notes from the agent: see [Drafting claims from notes](#drafting-claims-from-notes-optional).
 
@@ -200,7 +203,7 @@ The app has no AI model. Both features are rule-based, run offline and send noth
 
 | Problem                                         | Fix                                                                                     |
 | ----------------------------------------------- | --------------------------------------------------------------------------------------- |
-| Start is greyed out                             | Enter the candidate name.                                                               |
+| Create new file is greyed out                   | Enter the candidate name.                                                               |
 | Access refused                                  | Click **Grant access** and choose Allow. If there is no prompt, IT policy may block it. |
 | "File changed outside the app"                  | The file was reloaded. Review and save again.                                           |
 | "This browser cannot create or save data files" | Open the app in Microsoft Edge or Chrome.                                               |
