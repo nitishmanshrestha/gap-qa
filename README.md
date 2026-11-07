@@ -2,6 +2,18 @@
 
 A single-file tool that helps QA engineers organize, tag and export their achievements for a GAP promotion case.
 
+## Why it exists
+
+I first built this for myself and the Signetic QAs. Then I thought it could help everyone going through GAP, so I opened it up as a shared tool.
+
+## How it works
+
+1. **Add artifacts:** Log each piece of work as you go.
+2. **Review and refine:** Check coverage and tighten the wording until each artifact is strong.
+3. **Export:** Produce HTML slides or a PDF for your GAP.
+
+A simple agent can suggest changes to your artifacts. It uses only the document shared after the GAP KSS session, so its suggestions stay within what the panel expects.
+
 ## Screenshots
 
 ![Tagger page](images/GAP-handim-tagger.png)
@@ -11,6 +23,18 @@ A single-file tool that helps QA engineers organize, tag and export their achiev
 ## Who this is for
 
 QA Chapter engineers preparing a GAP promotion case. Pick your target level in the app. ASE has no tier list yet. Your evidence stays in your own JSON file.
+
+## What it does
+
+- **Logs artifacts:** Add each piece of work with the claim, problem, description, before and after, and the date it was done.
+- **Tags competencies:** Tag each artifact to the GAP competencies it proves, with the impact and proof status.
+- **Shows coverage:** Each level shows which competencies are covered, which are critical gaps, and how many artifacts support each one.
+- **Filters the list:** Click a competency tile to filter your saved artifacts to that competency.
+- **Holds attachments:** Add links, images and flow diagrams to the detailed evidence for each artifact.
+- **Drafts with the agent (optional):** Turn notes into claims and get suggestions on wording, numbers and proof.
+- **Keeps your data:** Saves everything to your own JSON file, so nothing is stored in the repo or sent elsewhere.
+- **Exports for the panel:** Produces HTML slides, a PDF (via print) or Markdown.
+- **Explains itself:** The How to page covers each situation and common troubleshooting.
 
 ## Find your situation
 
