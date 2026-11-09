@@ -48,13 +48,13 @@ QA Chapter engineers preparing a GAP promotion case. Pick your target level in t
 
 ## Folders
 
-| Folder         | Contents                                                       |
-| -------------- | -------------------------------------------------------------- |
-| `view/`        | The app. Open `view/gap-handim-tagger.html` in Edge or Chrome. |
-| `source/`      | Your data files, including the file the agent writes.          |
-| `images/`      | Screenshots used in this README.                               |
-| `source-deck/` | The original GAP deck. Do not edit.                            |
-| `knowledge/`   | The GAP competency matrix knowledge base.                      |
+| Folder         | Contents                                                                                                 |
+| -------------- | -------------------------------------------------------------------------------------------------------- |
+| `view/`        | The app. Open `view/gap-handim-tagger.html` in Edge or Chrome.                                           |
+| `source/`      | Your data files, including the file the agent writes. Exports go to `html/`, `pdf/` and `md/` inside it. |
+| `images/`      | Screenshots used in this README.                                                                         |
+| `source-deck/` | The original GAP deck. Do not edit.                                                                      |
+| `knowledge/`   | The GAP competency matrix knowledge base.                                                                |
 
 ## Using the app
 
@@ -62,7 +62,7 @@ QA Chapter engineers preparing a GAP promotion case. Pick your target level in t
 
 1. Open `view/gap-handim-tagger.html` in Edge or Chrome.
 2. Enter the candidate name. Project is optional. Pick the target level. Each level shows only its own artifacts and coverage.
-3. Click **Create new file** and save the suggested file, for example `your-name-l3.json`. To load a file you already have, click **Open existing**.
+3. Click **Create new file** and save the suggested file, for example `your-name-l3.json`, in `source/working-json/`. To load a file you already have, click **Open existing**.
 
 | If the file is   | Then                                   |
 | ---------------- | -------------------------------------- |
@@ -97,7 +97,7 @@ Keep only the strongest artifacts.
 
 ### Consolidating the output
 
-1. Click **Export** and choose **HTML slides**. Pick a parent folder, for example `source/`. The app creates a folder named `<name>_<level>_<mon>_<dd>_<hhmm>` (for example `your-name_le_nov_07_1432`) containing:
+1. Click **Export** and choose **HTML slides**. The first export asks for your `source/` folder; the app remembers it. The app writes a folder named `<name>_<project>_<level>` (for example `your-name_bench_le`) into `source/html/`, replacing any previous export with the same name. It contains:
 
 | File         | Contents                                                      |
 | ------------ | ------------------------------------------------------------- |
@@ -107,7 +107,7 @@ Keep only the strongest artifacts.
 | `images/`    | Your screenshots at full resolution.                          |
 
 2. Open `index.html`. The overview lists every artifact as a link, and the Contents button on each slide returns to it. Each artifact slide shows the claim story, figures, description, links and screenshot thumbnails together (a very long claim story moves to its own slide). Click a thumbnail to open a carousel of that artifact's screenshots. Use the arrow keys or the Prev and Next buttons, click a screenshot to enlarge it, and print from the browser for a PDF with one slide per page.
-3. Or click **Export** and choose **Markdown** for a text pack. Files are named `<candidate>-<level>-evidence.md`.
+3. **PDF** and **Markdown** save to `source/pdf/` and `source/md/`, named `<name>_<project>_<level>.pdf` and `.md`. Each export replaces the previous file with the same name. The project part is left out when the project is empty.
 4. Both use all ready artifacts for the current level. Tick **Include claim story in HTML slides and PDF** in the Export menu to include claim stories.
 
 The order you set by dragging is saved in your data file. It sets the artifact numbers in the HTML slides and the order of the Markdown export.
@@ -128,6 +128,7 @@ Both follow the same workflow and rules.
 - Checks each artifact against six required items: Point, Problem, Before, After, Consequence and Proof. Missing items are listed per artifact.
 - Drafts every artifact that passes: a claim line, 2 to 4 description bullets, competencies (primary first), figure status and proof status.
 - In draft mode, drafts incomplete artifacts, leaves missing numbers and proof empty, and asks one question per missing item.
+- Asks questions when a claim's text is too thin to judge, in a Questions section of its reply.
 - Shows all results in one message, then writes nothing until you confirm.
 - After you confirm, appends the claims to `source/your-name-<level>.json`, keeps existing claims unchanged and checks that the JSON parses.
 
@@ -195,7 +196,7 @@ Use the `gap-artifact-polisher` agent in GitHub Copilot Chat or Claude Code to d
 1. In Copilot Chat, choose `gap-artifact-polisher`. In Claude Code, ask for the `gap-artifact-polisher` subagent.
 2. Paste a document with one block per artifact: Point, Problem, Before, After, Consequence, Method (estimates only) and Proof.
 3. Complete any artifacts the agent lists as incomplete. It drafts the rest.
-4. Confirm the drafts. The agent writes `source/your-name-<level>.json` (for example `source/your-name-le.json`).
+4. Confirm the drafts. The agent writes `source/your-name-<level>.json` (for example `source/your-name-le.json`) and its replies to `suggestions.json` beside it.
 5. In the app, click **Open existing** and choose that file. The app reloads the file automatically when it changes on disk.
 
 Draft mode is for unfinished artifacts. Paste the output of **Copy for agent** and say "draft" (the agent also uses it when required items are blank). The agent skips the required-items gate, saves the artifact with `status: draft`, ranks competencies with knowledge base references, offers wording, and asks one question per missing item. It never fills in numbers or proof.

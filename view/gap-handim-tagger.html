@@ -12,21 +12,23 @@
     />
     <style>
       :root {
-        --bg: #f3ecdd;
-        --surface: #fffdf7;
-        --surface-alt: #f8f2e5;
-        --border: #e5d9c2;
+        --bg: #f8f4ea;
+        --surface: #fffefb;
+        --surface-alt: #fcf9f2;
+        --border: #ebe2d0;
+        --border-hover: #d6c8a9;
         --text: #141413;
-        --text-muted: #73726c;
+        --text-muted: #6f6e68;
         --primary: #c6613f;
         --primary-hover: #ae5130;
-        --primary-soft: #f8e9e1;
-        --accent-soft: #f0eee6;
+        --primary-soft: #fbeee8;
+        --accent-soft: #f5f3ec;
         --accent-text: #5e5d59;
         --success: #2f7d4f;
         --success-soft: #e2f1e7;
         --danger: #8f3a22;
         --danger-soft: #f3e6df;
+        --warning: #c99412;
         --shadow-sm: 0 1px 2px rgba(90, 65, 30, 0.08);
         --shadow-md:
           0 1px 1px rgba(90, 65, 30, 0.05), 0 6px 18px rgba(90, 65, 30, 0.08);
@@ -57,7 +59,7 @@
           url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='180' height='180'><filter id='n'><feTurbulence type='fractalNoise' baseFrequency='.85' numOctaves='2' stitchTiles='stitch'/><feColorMatrix values='0 0 0 0 .36  0 0 0 0 .27  0 0 0 0 .15  0 0 0 .09 0'/></filter><rect width='100%' height='100%' filter='url(%23n)'/></svg>"),
           radial-gradient(
             1200px 600px at 50% -10%,
-            #fbf6ea 0%,
+            #fffdf8 0%,
             transparent 70%
           ),
           var(--bg);
@@ -148,6 +150,19 @@
         background: var(--surface);
         color: var(--text);
         box-shadow: var(--shadow-sm);
+      }
+
+      @keyframes view-in {
+        from {
+          opacity: 0;
+          transform: translateY(8px);
+        }
+      }
+
+      .layout:not([hidden]),
+      #suggestionsView:not([hidden]),
+      #howtoView:not([hidden]) {
+        animation: view-in 0.4s var(--ease) both;
       }
 
       .howto {
@@ -517,7 +532,7 @@
         border-right: 2px solid currentColor;
         border-bottom: 2px solid currentColor;
         transform: rotate(-45deg);
-        transition: transform 0.15s ease;
+        transition: transform 0.3s var(--ease);
       }
 
       .form-section[open] > .form-section-title::before {
@@ -546,6 +561,19 @@
 
       .form-section-body {
         padding: 0 var(--space-4) var(--space-4);
+      }
+
+      .form-section::details-content {
+        block-size: 0;
+        overflow: hidden;
+        interpolate-size: allow-keywords;
+        transition:
+          block-size 0.35s var(--ease),
+          content-visibility 0.35s allow-discrete;
+      }
+
+      .form-section[open]::details-content {
+        block-size: auto;
       }
 
       .form-section input[type="text"],
@@ -671,9 +699,10 @@
       }
 
       .error {
-        min-height: 20px;
+        min-height: 24px;
         margin: var(--space-3) 0 0;
-        font-size: 13px;
+        font-size: 16px;
+        font-weight: 600;
         color: var(--danger);
       }
 
@@ -827,8 +856,8 @@
       }
 
       .claim-images .image-thumb {
-        width: 200px;
-        height: 140px;
+        width: 160px;
+        height: 112px;
       }
 
       .claim-images .image-thumb::after {
@@ -1088,6 +1117,198 @@
         margin-top: var(--space-3);
       }
 
+      .suggestions .card-title {
+        color: var(--primary-hover);
+      }
+
+      .sugg-legend {
+        display: flex;
+        flex-wrap: wrap;
+        align-items: center;
+        gap: var(--space-3);
+        margin: 0 0 var(--space-4);
+        font-size: 13px;
+        color: var(--text-muted);
+      }
+
+      .sugg-legend-item {
+        display: inline-flex;
+        align-items: center;
+        gap: 6px;
+      }
+
+      .sugg-swatch {
+        width: 12px;
+        height: 12px;
+        border-radius: 999px;
+      }
+
+      .sugg-swatch.is-user {
+        background: var(--accent-soft);
+        border: 1px solid var(--border);
+      }
+
+      .sugg-swatch.is-agent {
+        background: var(--primary-soft);
+        border: 1px dashed var(--primary);
+      }
+
+      .sugg-dot {
+        flex: none;
+        display: inline-block;
+        width: 8px;
+        height: 8px;
+        margin-top: 0.5em;
+        border-radius: 50%;
+        background: var(--accent-text);
+      }
+
+      .sugg-dot.is-strong {
+        background: var(--success);
+      }
+
+      .sugg-dot.is-improve {
+        background: var(--primary);
+      }
+
+      .sugg-muted {
+        color: var(--text-muted);
+      }
+
+      .sugg-compare {
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
+        gap: var(--space-3);
+        margin-bottom: var(--space-4);
+      }
+
+      .sugg-col {
+        padding: var(--space-3);
+        border-radius: var(--radius-md);
+      }
+
+      .sugg-col.is-user {
+        background: var(--surface-alt);
+        border: 1px solid var(--border);
+      }
+
+      .sugg-col.is-agent {
+        background: var(--surface);
+        border: 1px dashed var(--primary);
+      }
+
+      .sugg-col-label {
+        margin: 0 0 var(--space-2);
+        font-size: 13px;
+        font-weight: 600;
+        color: var(--text-muted);
+      }
+
+      .sugg-col.is-agent .sugg-col-label {
+        color: var(--primary-hover);
+      }
+
+      .sugg-col .tag-row {
+        margin-bottom: 0;
+      }
+
+      .sugg-agent-list {
+        margin: 0;
+        padding: 0;
+        list-style: none;
+      }
+
+      .sugg-agent-list li {
+        display: flex;
+        gap: var(--space-2);
+        align-items: flex-start;
+        margin-bottom: var(--space-2);
+        font-weight: 600;
+      }
+
+      .sugg-agent-list li:last-child {
+        margin-bottom: 0;
+      }
+
+      .sugg-agent-list .dot {
+        flex: none;
+        width: 8px;
+        height: 8px;
+        margin-top: 0.5em;
+        border-radius: 50%;
+        background: var(--c-solid, var(--primary));
+      }
+
+      .sugg-table-wrap {
+        overflow-x: auto;
+      }
+
+      .sugg-table {
+        width: 100%;
+        border-collapse: collapse;
+        font-size: 14px;
+        line-height: 1.5;
+      }
+
+      .sugg-table th {
+        padding: var(--space-2) var(--space-3);
+        font-size: 13px;
+        font-weight: 600;
+        text-align: left;
+        color: var(--text-muted);
+        border-bottom: 1px solid var(--border);
+      }
+
+      .sugg-table td {
+        padding: var(--space-3);
+        vertical-align: top;
+        border-bottom: 1px solid var(--border);
+      }
+
+      .sugg-table td:first-child {
+        width: 20%;
+        font-weight: 600;
+      }
+
+      .sugg-table td:nth-child(2) {
+        width: 80%;
+      }
+
+      .sugg-area {
+        display: block;
+        margin-bottom: var(--space-2);
+      }
+
+      .sugg-edit {
+        margin-top: 2px;
+      }
+
+      .sugg-list {
+        margin: 0;
+        padding: 0;
+        list-style: none;
+      }
+
+      .sugg-list li {
+        display: flex;
+        gap: var(--space-2);
+        align-items: flex-start;
+        margin-bottom: var(--space-2);
+      }
+
+      .sugg-list li:last-child {
+        margin-bottom: 0;
+      }
+
+      .sugg-why-line {
+        display: block;
+        margin-top: 2px;
+        font-size: 13px;
+        font-weight: 400;
+        line-height: 1.5;
+        color: var(--text-muted);
+      }
+
       .claim + .claim {
         margin-top: var(--space-3);
       }
@@ -1156,15 +1377,33 @@
         flex: none;
         margin-left: auto;
         color: var(--text-muted);
-        transition: transform var(--ease);
-      }
-
-      .claim-title[aria-expanded="true"] .claim-chevron {
+        transition: transform 0.3s var(--ease);
         transform: rotate(180deg);
       }
 
-      .claim-details[hidden] {
-        display: none;
+      .claim-details {
+        display: grid;
+        grid-template-rows: 0fr;
+        opacity: 0;
+        transition:
+          grid-template-rows 0.32s var(--ease),
+          opacity 0.25s ease;
+      }
+
+      .claim-details.is-open {
+        grid-template-rows: 1fr;
+        opacity: 1;
+      }
+
+      .claim-details-inner {
+        min-height: 0;
+        overflow: hidden;
+      }
+
+      @media (prefers-reduced-motion: reduce) {
+        .claim-details {
+          transition: none;
+        }
       }
 
       .claim a {
@@ -1240,7 +1479,7 @@
       }
 
       .rte-btn:hover {
-        border-color: #cdbd9c;
+        border-color: var(--border-hover);
       }
 
       .rte-editor {
@@ -1365,8 +1604,12 @@
         font-size: 14px;
       }
 
+      .data-bar.is-connected {
+        border-color: var(--success);
+      }
       .data-bar.is-connected .data-status {
-        display: none;
+        color: var(--success);
+        font-weight: 600;
       }
 
       .conn-badge {
@@ -1395,44 +1638,27 @@
         cursor: default;
       }
 
-      .conn-snackbar {
-        position: absolute;
-        top: calc(100% + 10px);
-        left: 0;
-        z-index: 20;
-        width: max-content;
-        max-width: 420px;
-        padding: 10px 14px;
-        border-radius: var(--radius-sm);
-        background: var(--text);
-        color: #fff;
-        font-size: 13px;
-        font-weight: 500;
-        line-height: 1.4;
-        box-shadow: 0 10px 30px rgba(20, 20, 19, 0.25);
-        opacity: 0;
-        pointer-events: none;
-        transition: opacity 0.2s var(--ease);
-      }
-      .conn-badge:hover .conn-snackbar,
-      .conn-badge:focus-visible .conn-snackbar {
-        opacity: 1;
-      }
-
       .toast {
         position: fixed;
         left: 50%;
-        bottom: 28px;
+        top: 20px;
         z-index: 50;
-        max-width: 90vw;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        gap: 10px;
+        width: max-content;
+        max-width: min(90vw, 460px);
         padding: 12px 20px;
         font-weight: 600;
+        line-height: 1.4;
+        text-align: center;
         color: #fff;
         background: var(--text);
-        border-radius: 999px;
+        border-radius: var(--radius-md);
         box-shadow: 0 10px 30px rgba(20, 20, 19, 0.25);
         opacity: 0;
-        transform: translate(-50%, 16px);
+        transform: translate(-50%, -16px);
         pointer-events: none;
         transition:
           opacity 0.4s var(--ease),
@@ -1444,8 +1670,31 @@
         transform: translate(-50%, 0);
       }
 
+      .toast-icon svg {
+        width: 20px;
+        height: 20px;
+        flex: none;
+        fill: none;
+        stroke: currentColor;
+        stroke-width: 2;
+        stroke-linecap: round;
+        stroke-linejoin: round;
+      }
+
+      .toast-icon:empty {
+        display: none;
+      }
       .toast.is-error {
         background: var(--danger);
+      }
+
+      .toast.is-success {
+        background: var(--success);
+      }
+
+      .toast.is-warning {
+        background: var(--warning);
+        color: var(--text);
       }
 
       .snackbar-ai {
@@ -1453,10 +1702,12 @@
         bottom: auto;
         left: 0;
         right: 0;
+        width: auto;
         max-width: none;
         padding: 14px 20px;
         border-radius: 0;
         text-align: center;
+        white-space: normal;
         background: var(--danger);
         transform: translateY(-100%);
       }
@@ -1595,64 +1846,6 @@
         color: var(--text-muted);
       }
 
-      .flow-box svg {
-        max-width: 360px;
-        margin: 0 auto;
-      }
-
-      .flow-node {
-        fill: var(--surface);
-        stroke: var(--border);
-        stroke-width: 1.5;
-      }
-
-      .flow-text {
-        font-size: 13px;
-        fill: var(--text);
-      }
-
-      .flow-arrow {
-        stroke: var(--text-muted);
-        stroke-width: 1.5;
-      }
-
-      .flow-head {
-        fill: var(--text-muted);
-      }
-
-      .flow-step {
-        cursor: pointer;
-      }
-
-      .flow-step:hover .flow-node,
-      .flow-step:focus-visible .flow-node {
-        stroke: var(--primary);
-      }
-
-      .flow-step:focus-visible .flow-node {
-        stroke-width: 2.5;
-      }
-
-      .flow-step[aria-pressed="true"] .flow-node {
-        fill: var(--primary-soft);
-        stroke: var(--primary);
-        stroke-width: 2;
-      }
-
-      .flow-caption {
-        margin: var(--space-3) 0 0;
-        font-size: 13px;
-        color: var(--text);
-      }
-
-      .flow-caption:empty {
-        display: none;
-      }
-
-      .flow-item span {
-        color: var(--text);
-      }
-
       .table-wrap {
         overflow-x: auto;
       }
@@ -1738,7 +1931,7 @@
 
       /* Layout rhythm: 8px grid, consistent gutters */
       .page {
-        padding: 48px 32px 72px;
+        padding: 48px 32px;
       }
 
       .app-header {
@@ -1766,9 +1959,11 @@
       }
 
       .site-footer {
-        margin: 32px 0 8px;
+        margin: 8px 0 8px;
         text-align: center;
-        font-size: 0.8125rem;
+        font-family: var(--serif);
+        font-style: italic;
+        font-size: 0.8129rem;
         color: var(--muted, #6b6b6b);
       }
 
@@ -1813,14 +2008,14 @@
       input[type="text"]:hover,
       textarea:hover,
       select:hover {
-        border-color: #cdbd9c;
+        border-color: var(--border-hover);
       }
 
       select {
         appearance: none;
         padding-right: 40px;
         cursor: pointer;
-        background-image: url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='12' height='8' viewBox='0 0 12 8'><path d='M1 1.5l5 5 5-5' fill='none' stroke='%2373726c' stroke-width='1.6' stroke-linecap='round' stroke-linejoin='round'/></svg>");
+        background-image: url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='12' height='8' viewBox='0 0 12 8'><path d='M1 1.5l5 5 5-5' fill='none' stroke='%236f6e68' stroke-width='1.6' stroke-linecap='round' stroke-linejoin='round'/></svg>");
         background-repeat: no-repeat;
         background-position: right 16px center;
       }
@@ -1847,7 +2042,7 @@
       }
 
       .mp-trigger:hover {
-        border-color: #cdbd9c;
+        border-color: var(--border-hover);
       }
 
       .mp-trigger svg {
@@ -1918,7 +2113,7 @@
       }
 
       .mp-month:hover {
-        border-color: #cdbd9c;
+        border-color: var(--border-hover);
       }
 
       .mp-month.is-selected {
@@ -1990,7 +2185,7 @@
 
       @media (max-width: 640px) {
         .page {
-          padding: 28px 16px 56px;
+          padding: 28px 16px;
         }
         .card,
         .setup.card,
@@ -2077,18 +2272,17 @@
             </div>
           </div>
           <div class="data-bar">
-            <span class="conn-badge" tabindex="0" aria-describedby="connNote">
+            <span
+              class="conn-badge"
+              role="img"
+              aria-label="Not connected"
+              title="Not connected"
+            >
               <span aria-hidden="true">&#10003;</span>
-              <span class="conn-snackbar" id="connNote"
-                >Not connected. Choose or create a data file to save.</span
-              >
             </span>
             <span class="data-status" id="dataStatus"
-              >Enter the candidate name (project is optional) and pick the
-              target level. Create new file saves a new file (suggested name
-              name-level.json, e.g. your-name-l3.json). Open existing loads a
-              file you already have. If the browser asks to replace a file,
-              choose Replace: existing data is kept.</span
+              >Enter a name and pick a level, then create or open a data
+              file.</span
             >
             <span class="data-actions">
               <button
@@ -2124,36 +2318,36 @@
 
       <div class="layout">
         <section class="card" aria-labelledby="coverageTitle">
-          <details class="form-section" open>
-            <summary class="form-section-title" id="coverageTitle">
-              Coverage
-            </summary>
-            <div class="form-section-body">
-              <p class="field-info">
-                Each tile is one competency for your level. Tiles with evidence
-                show how many saved artifacts are tagged with it, and the tier
-                shows how much it weighs for your level: a critical gap can
-                block promotion on its own. Click a tile to filter the saved
-                artifacts to that competency. Click it again, or use Show all,
-                to clear the filter.
-              </p>
-              <p class="summary" id="coverageSummary"></p>
-              <button
-                type="button"
-                class="btn btn-ghost btn-small"
-                id="coverageShowAllBtn"
-                hidden
-              >
-                Show all
-              </button>
-              <div class="coverage-grid" id="coverageGrid"></div>
-            </div>
-          </details>
+          <div class="card-header">
+            <h2 class="card-title" id="coverageTitle">
+              COMPETENCY MATRIX COVERAGE STATUS
+            </h2>
+            <button
+              type="button"
+              class="btn btn-ghost btn-small"
+              id="coverageShowAllBtn"
+              hidden
+            >
+              Show all
+            </button>
+          </div>
+          <div class="form-section-body">
+            <p class="field-info">
+              Each tile is one competency for your level. Tiles with evidence
+              show how many saved artifacts are tagged with it, and the tier
+              shows how much it weighs for your level: a critical gap can block
+              promotion on its own. Click a tile to filter the saved artifacts
+              to that competency. Click it again, or use Show all, to clear the
+              filter.
+            </p>
+            <p class="summary" id="coverageSummary"></p>
+            <div class="coverage-grid" id="coverageGrid"></div>
+          </div>
         </section>
 
         <section class="card" id="formCard" aria-labelledby="formTitle">
           <div class="card-header">
-            <h2 class="card-title" id="formTitle">Add an artifact</h2>
+            <h2 class="card-title" id="formTitle">ADD AN ARTIFACT</h2>
             <button
               type="button"
               class="btn btn-ghost btn-small"
@@ -2271,22 +2465,6 @@
                   four to six.
                 </p>
                 <div id="competencyPicker"></div>
-              </div>
-
-              <div class="field">
-                <label class="label" for="agentSuggestion"
-                  >AI suggestion <span class="optional">(optional)</span></label
-                >
-                <p class="field-info">
-                  Paste the agent's reply for this artifact. It stays with the
-                  artifact and is listed on the Suggestions page. Exports do not
-                  include it.
-                </p>
-                <textarea
-                  id="agentSuggestion"
-                  rows="5"
-                  placeholder="e.g. Suggested: TST, AUT. Missing: proof of the before and after numbers."
-                ></textarea>
               </div>
 
               <div class="field">
@@ -2582,29 +2760,6 @@
                 </p>
                 <div class="image-grid" id="imageGrid"></div>
               </div>
-
-              <div class="field">
-                <span class="label"
-                  >Flow <span class="optional">(optional)</span></span
-                >
-                <p class="field-info">
-                  Steps from start to finish. Shows as a flowchart on the card.
-                  Click a step there to read it in full.
-                </p>
-                <div class="input-row">
-                  <input
-                    type="text"
-                    id="flowInput"
-                    placeholder="e.g. Generated case corrected before merge, reviewed line by line"
-                    aria-label="Flow step"
-                  />
-                  <button type="button" class="btn btn-ghost" id="addFlowBtn">
-                    Add step
-                  </button>
-                </div>
-                <div class="link-list" id="flowList"></div>
-                <div id="flowPreview" hidden></div>
-              </div>
             </div>
           </details>
 
@@ -2621,7 +2776,7 @@
               id="agentBtn"
               title="Copy this artifact as a block for the gap-artifact-polisher agent"
             >
-              Copy for agent
+              Copy
             </button>
             <button type="button" class="btn" id="saveBtn">
               Save artifact
@@ -2632,7 +2787,7 @@
         <section class="card" aria-labelledby="claimsTitle">
           <div class="card-header">
             <h2 class="card-title" id="claimsTitle">
-              Saved artifacts (<span id="claimCount">0</span>)
+              SAVED ARTIFACTS (<span id="claimCount">0</span>)
             </h2>
             <div class="claims-actions">
               <button
@@ -2641,6 +2796,9 @@
                 id="toggleAllBtn"
                 hidden
               ></button>
+              <button type="button" class="btn" id="addArtifactBtn">
+                Add new artifact
+              </button>
               <div class="export-menu">
                 <button
                   type="button"
@@ -2696,6 +2854,14 @@
           <h2 class="card-title">
             AI suggestions (<span id="suggestionCount">0</span>)
           </h2>
+          <button
+            type="button"
+            class="btn btn-ghost btn-small"
+            id="reloadSuggestionsBtn"
+            title="Read source/suggestions/suggestions.json again"
+          >
+            Reload
+          </button>
         </div>
         <p class="field-info suggestion-warning" role="note">
           <strong>AI can make mistakes.</strong> Check each suggestion before
@@ -2705,6 +2871,20 @@
           From the gap-artifact-polisher agent, one per artifact in the current
           level.
         </p>
+        <div class="sugg-legend" aria-label="Key">
+          <span class="sugg-legend-item"
+            ><span class="sugg-swatch is-user"></span>Marked by you</span
+          >
+          <span class="sugg-legend-item"
+            ><span class="sugg-swatch is-agent"></span>Agent thinks</span
+          >
+          <span class="sugg-legend-item"
+            ><span class="sugg-dot is-strong"></span>Strong</span
+          >
+          <span class="sugg-legend-item"
+            ><span class="sugg-dot is-improve"></span>Improve</span
+          >
+        </div>
         <div id="suggestionList"></div>
       </section>
       <section class="howto" id="howtoView" hidden aria-labelledby="tabHowto">
@@ -2801,17 +2981,17 @@
                     measured
                   </li>
                   <li>
-                    <strong>Proof</strong> (optional): links, screenshots or a
-                    flow
+                    <strong>Proof</strong> (optional): links or screenshots
                   </li>
                 </ul>
                 <p>
                   Short on time? Click <strong>Copy for agent</strong> to copy
                   the artifact for the <code>gap-artifact-polisher</code> agent,
                   which suggests competencies from the knowledge base and lists
-                  what is missing. Paste its reply into
-                  <strong>AI suggestion</strong> to keep it with the artifact.
-                  The <strong>Suggestions</strong> tab lists them all.
+                  what is missing. The agent writes its replies to
+                  <code>source/suggestions/suggestions.json</code>. GAP Handim
+                  loads that file on its own; the
+                  <strong>Suggestions</strong> tab lists them all.
                 </p>
                 <div class="howto-example">
                   <span class="howto-example-label">Example</span>
@@ -2841,13 +3021,13 @@
                 </p>
                 <ul>
                   <li>
-                    <strong>HTML slides</strong> saves a folder with the slides
-                    (index.html, styles.css, data.json and images) named after
-                    you, your level and the time.
+                    <strong>HTML slides</strong> saves a folder in
+                    <em>source/html</em> with index.html, styles.css, data.json
+                    and images.
                   </li>
                   <li>
-                    <strong>Markdown</strong> opens a save dialog in your file's
-                    folder.
+                    <strong>PDF</strong> saves to <em>source/pdf</em>, and
+                    <strong>Markdown</strong> to <em>source/md</em>.
                   </li>
                   <li>
                     <strong>Include claim story in HTML slides and PDF</strong>
@@ -2855,6 +3035,13 @@
                     default.
                   </li>
                 </ul>
+                <p>
+                  Names follow name_project_level (the project is left out when
+                  empty). Each export replaces the previous file or folder with
+                  the same name. Files go to source/html, source/pdf and
+                  source/md. The first export asks you to choose your source
+                  folder, and the app remembers it.
+                </p>
                 <p>
                   Exports use all ready artifacts for the current level. Agent
                   drafts are excluded until you edit them and save here.
@@ -2906,8 +3093,9 @@
                 the rest.
               </li>
               <li>
-                Confirm the drafts. The agent writes
-                <code>source/your-name-le.json</code>.
+                Confirm the drafts. The agent writes the claims to
+                <code>source/your-name-le.json</code> and the replies to
+                <code>source/suggestions/suggestions.json</code>.
               </li>
               <li>
                 Click <strong>Open existing</strong> and choose that file. Hand
@@ -2919,6 +3107,22 @@
               use <strong>Copy for agent</strong> with required items blank. The
               agent saves it as a draft and lists what is missing.
             </p>
+            <p>
+              If a reply ends with a <strong>Questions</strong> section, the
+              text was too thin to judge. Add the answer with
+              <strong>Edit artifact</strong>, then ask the agent to assess it
+              again.
+            </p>
+            <div class="howto-sub">
+              <h3>Reviewing suggestions</h3>
+              <p>
+                The <strong>Suggestions</strong> tab has one card per artifact.
+                <strong>Strong</strong> and <strong>Improve</strong> dots mark
+                each point, and the colour key at the top explains the swatches.
+                Click <strong>Edit this section</strong> to change that part of
+                the artifact. Check each point before you rely on it.
+              </p>
+            </div>
             <details open>
               <summary>Limits</summary>
               <ul>
@@ -2976,7 +3180,10 @@
 
     <footer class="site-footer">by Nitish Man Shrestha</footer>
 
-    <div class="toast" id="toast" role="status" aria-live="polite"></div>
+    <div class="toast" id="toast" role="status" aria-live="polite">
+      <span class="toast-icon" id="toastIcon" aria-hidden="true"></span>
+      <span id="toastText"></span>
+    </div>
     <div
       class="toast snackbar-ai"
       id="aiSnackbar"
@@ -3103,17 +3310,19 @@
         claims: [],
         dataFile: null,
         pendingHandle: null,
+        recalledHandle: null,
         busy: false,
         extra: {},
         candidate: { name: "", project: "" },
         lastModified: 0,
         links: [],
         images: [],
-        flow: [],
         expandedClaims: new Set(),
         activeCompetency: null,
         editingId: null,
         deckUrl: "",
+        suggestions: {},
+        suggestionsHint: "",
       };
 
       const $ = (id) => document.getElementById(id);
@@ -3290,6 +3499,11 @@
         setMonth(claim.doneOn || "");
       }
 
+      function positionLabel() {
+        const persona = LEVELS.find((l) => l.code === state.level)?.persona;
+        return `applied level ${persona ? `${state.level}: ${persona}` : state.level}`;
+      }
+
       function renderLevelOptions() {
         $("levelSelect").innerHTML = LEVELS.map(
           (level) =>
@@ -3427,73 +3641,6 @@
           .join("");
       }
 
-      const MAX_FLOW_STEPS = 12;
-      const FLOW = { w: 360, boxH: 44, gap: 28, pad: 16, inset: 20 };
-
-      function addFlowStep() {
-        const input = $("flowInput");
-        const step = input.value.trim().slice(0, 120);
-        showFormError("");
-        if (!step) return;
-        if (state.flow.length >= MAX_FLOW_STEPS) {
-          showFormError(`A flow can have up to ${MAX_FLOW_STEPS} steps.`);
-          return;
-        }
-        state.flow.push(step);
-        input.value = "";
-        renderFlowForm();
-        scheduleAutosave();
-      }
-
-      function flowSvg(steps) {
-        const { w, boxH, gap, pad, inset } = FLOW;
-        const height = pad * 2 + steps.length * boxH + (steps.length - 1) * gap;
-        const mid = w / 2;
-        const parts = steps.map((step, index) => {
-          const y = pad + index * (boxH + gap);
-          const box = `<g class="flow-step" tabindex="0" role="button" aria-pressed="false" data-full="${esc(step)}"><rect class="flow-node" x="${inset}" y="${y}" width="${w - inset * 2}" height="${boxH}" rx="8"><title>${esc(step)}</title></rect><text class="flow-text" x="${mid}" y="${y + boxH / 2 + 4}" text-anchor="middle">${esc(shorten(step, 44))}</text></g>`;
-          if (index === steps.length - 1) return box;
-          const top = y + boxH;
-          const tip = top + gap;
-          return `${box}<line class="flow-arrow" x1="${mid}" y1="${top}" x2="${mid}" y2="${tip - 8}"/><polygon class="flow-head" points="${mid - 6},${tip - 8} ${mid + 6},${tip - 8} ${mid},${tip}"/>`;
-        });
-        return `<svg viewBox="0 0 ${w} ${height}" role="img" aria-label="Flowchart">${parts.join("")}</svg>`;
-      }
-
-      function flowHtml(steps) {
-        const items = (steps || []).map(String);
-        if (!items.length) return "";
-        return `<figure class="chart-box flow-box"><figcaption class="chart-title">Flow</figcaption>${flowSvg(items)}<p class="flow-caption" aria-live="polite"></p></figure>`;
-      }
-
-      function selectFlowStep(node) {
-        const figure = node.closest(".flow-box");
-        const steps = [...figure.querySelectorAll(".flow-step")];
-        const caption = figure.querySelector(".flow-caption");
-        const wasPressed = node.getAttribute("aria-pressed") === "true";
-        steps.forEach((step) => step.setAttribute("aria-pressed", "false"));
-        if (wasPressed) {
-          caption.textContent = "";
-          return;
-        }
-        node.setAttribute("aria-pressed", "true");
-        caption.textContent = `Step ${steps.indexOf(node) + 1} of ${steps.length}: ${node.dataset.full}`;
-      }
-
-      function renderFlowForm() {
-        $("flowList").innerHTML = state.flow
-          .map(
-            (step, index) => `
-      <div class="link-item flow-item">
-        <span><strong>${index + 1}.</strong>${esc(step)}</span>
-        <button type="button" class="btn btn-ghost btn-small" data-remove-flow="${index}" aria-label="Remove step ${index + 1}">Remove</button>
-      </div>`,
-          )
-          .join("");
-        $("flowPreview").hidden = !state.flow.length;
-        $("flowPreview").innerHTML = flowHtml(state.flow);
-      }
-
       const MAX_IMAGES = 6;
       const MAX_IMAGE_EDGE = 2400;
       const SAFE_IMAGE = /^data:image\/(jpeg|png|webp);base64,[A-Za-z0-9+/=]+$/;
@@ -3629,7 +3776,6 @@
         const totalCovered = COMPETENCIES.filter(
           (c) => counts[c.code] > 0,
         ).length;
-        $("coverageTitle").textContent = `${state.level} coverage`;
         $("coverageSummary").textContent = critical.length
           ? `Critical competencies covered: ${criticalCovered} of ${critical.length}. Overall, ${totalCovered} of ${COMPETENCIES.length} competencies have at least one artifact for ${state.level}. Cover the critical ones first.`
           : `No tier matrix for ${state.level} in the knowledge base. Overall, ${totalCovered} of ${COMPETENCIES.length} competencies have at least one artifact for ${state.level}.`;
@@ -3667,10 +3813,6 @@
           month: "short",
         });
         return `${month} ${y}`;
-      }
-
-      function shorten(text, max) {
-        return text.length > max ? `${text.slice(0, max - 1)}…` : text;
       }
 
       const PROOF_STATUS = {
@@ -3797,7 +3939,7 @@
         <div class="tag-row">
           ${claim.competencies.map((code) => `<span class="comp-tag" style="${compVars(code)}"><i class="dot"></i>${esc(nameOf(code))}</span>`).join("")}
         </div>
-        <div class="claim-details" ${expanded ? "" : "hidden"}>
+        <div class="claim-details${expanded ? " is-open" : ""}"${expanded ? "" : " inert"}><div class="claim-details-inner">
           ${linkCount ? `<div class="link-list">${claim.links.map((link) => `<div class="link-item"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71"/><path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71"/></svg>${renderLinkAnchor(link)}</div>`).join("")}</div>` : ""}
           <div class="claim-description">
             <div class="tag-row">
@@ -3816,10 +3958,10 @@
             ${claim.description ? `<dl class="impact-list"><dt>Description</dt><dd>${sanitizeHtml(claim.description)}</dd></dl>` : ""}
           </div>
           ${claimImagesHtml(claim)}
-          ${flowHtml(claim.flow)}
           <div class="claim-actions">
             <button type="button" class="btn btn-ghost btn-small" data-edit-claim="${esc(claim.id)}">Edit</button>
             <button type="button" class="btn btn-ghost btn-danger-ghost btn-small" data-delete-claim="${esc(claim.id)}">Delete</button>
+          </div>
           </div>
         </div>
       </article>`;
@@ -3870,26 +4012,276 @@
         return out.join("");
       }
 
-      function renderSuggestions() {
-        const claims = levelClaims().filter((claim) => claim.agentSuggestion);
-        $("suggestionCount").textContent = claims.length;
-        $("suggestionList").innerHTML = claims.length
-          ? claims
+      const SUGG_KIND = { strong: "Strong", improve: "Improve", note: "Note" };
+
+      // Splits an agent reply into its "###" sections and their bullet items.
+      function parseSuggestionSections(value) {
+        const sections = [];
+        value.split(/\r?\n/).forEach((raw) => {
+          const line = raw.trim();
+          const heading = line.match(/^#{1,6}\s+(.*)$/);
+          if (heading) {
+            sections.push({ title: heading[1].trim(), items: [] });
+            return;
+          }
+          const bullet = line.match(/^[-*]\s+(.*)$/);
+          if (bullet && sections.length)
+            sections[sections.length - 1].items.push(bullet[1]);
+        });
+        return sections;
+      }
+
+      // Builds table rows and the agent's competency view. Icons are stripped; the kind comes from the label.
+      function buildSuggestionView(sections) {
+        const rows = [];
+        const agent = { tags: [] };
+        sections.forEach((section) => {
+          const isCompetency = /competenc/i.test(section.title);
+          let lastTags = [];
+          section.items.forEach((item) => {
+            const match = item.match(/^\*\*(.+?):\*\*\s*(.*)$/);
+            const label = match ? match[1].trim().toLowerCase() : "";
+            const text = (match ? match[2] : item)
+              .replace(/\s*[\u2705\u26A0]\uFE0F?/g, "")
+              .trim();
+            if (isCompetency) {
+              if (label === "reason") {
+                lastTags.forEach((tag) => {
+                  if (!tag.why) tag.why = text;
+                });
+              } else {
+                lastTags = text
+                  .split(/[;,]/)
+                  .map((name) => name.trim().replace(/\.$/, ""))
+                  .filter(Boolean)
+                  .map((name) => ({ name, why: "" }));
+                agent.tags.push(...lastTags);
+              }
+              return;
+            }
+            const last = rows[rows.length - 1];
+            if (label === "reason") {
+              if (last && last.area === section.title && !last.why)
+                last.why = text;
+              else
+                rows.push({ area: section.title, kind: "note", text, why: "" });
+              return;
+            }
+            const kind =
+              label === "strongest"
+                ? "strong"
+                : label === "suggestion"
+                  ? "improve"
+                  : "note";
+            rows.push({ area: section.title, kind, text, why: "" });
+          });
+        });
+        return { rows, agent };
+      }
+
+      // Resolves an agent competency name or code to its matrix code, so the tag keeps its colour.
+      function compCodeByName(name) {
+        const key = name.toLowerCase();
+        const match = COMPETENCIES.find(
+          (c) => c.code.toLowerCase() === key || c.name.toLowerCase() === key,
+        );
+        return match ? match.code : "";
+      }
+
+      // Maps a suggestion area to the form field that holds it.
+      function focusFieldFor(area) {
+        if (/number/i.test(area)) return "before";
+        if (/proof/i.test(area)) return "proofStatus";
+        if (/wording|level/i.test(area)) return "consequence";
+        return /problem|purpose/i.test(area) ? "problem" : "point";
+      }
+
+      function renderSuggestionCard(claim) {
+        const sections = parseSuggestionSections(claim.agentSuggestion);
+        const marked = claim.competencies.length
+          ? claim.competencies
               .map(
-                (claim) => `
-      <article class="claim">
-        <h3 class="claim-title-text">${esc(claim.point)}</h3>
-        <div class="tag-row">
-          ${claim.competencies.map((code) => `<span class="comp-tag" style="${compVars(code)}"><i class="dot"></i>${esc(nameOf(code))}</span>`).join("")}
-        </div>
-        <div class="suggestion-text">${renderSuggestionText(claim.agentSuggestion)}</div>
-        <div class="claim-actions">
-          <button type="button" class="btn btn-ghost btn-small" data-edit-suggestion="${esc(claim.id)}">Edit artifact</button>
-        </div>
-      </article>`,
+                (code) =>
+                  `<span class="comp-tag" style="${compVars(code)}"><i class="dot"></i>${esc(nameOf(code))}</span>`,
               )
               .join("")
-          : '<p class="empty">No AI suggestions yet. Paste the agent reply into AI suggestion on an artifact.</p>';
+          : '<span class="sugg-muted">None marked</span>';
+        const actions = `
+        <div class="claim-actions">
+          <button type="button" class="btn btn-ghost btn-small" data-edit-suggestion="${esc(claim.id)}">Edit artifact</button>
+        </div>`;
+        if (!sections.length) {
+          return `
+      <article class="claim">
+        <h3 class="claim-title-text">${esc(claim.point)}</h3>
+        <div class="tag-row">${marked}</div>
+        <div class="suggestion-text">${renderSuggestionText(claim.agentSuggestion)}</div>${actions}
+      </article>`;
+        }
+        const { rows, agent } = buildSuggestionView(sections);
+        const agentItems =
+          agent.tags
+            .map((tag) => {
+              if (/^none/i.test(tag.name))
+                return `<li class="sugg-muted">${esc(tag.name)}</li>`;
+              const code = compCodeByName(tag.name);
+              const label = code ? nameOf(code) : tag.name;
+              return `<li${code ? ` style="${compVars(code)}"` : ""}><i class="dot"></i><span>${esc(label)}${tag.why ? `<span class="sugg-why-line">${inlineMarkdown(esc(tag.why))}</span>` : ""}</span></li>`;
+            })
+            .join("") || '<li class="sugg-muted">None suggested</li>';
+        const groups = [];
+        rows.forEach((row) => {
+          let group = groups.find((g) => g.area === row.area);
+          if (!group) groups.push((group = { area: row.area, items: [] }));
+          group.items.push(row);
+        });
+        const body = groups
+          .map((group) => {
+            const items = group.items
+              .map(
+                (row) => `
+                <li><span class="sugg-dot is-${row.kind}" title="${SUGG_KIND[row.kind]}"></span>
+                  <span>${inlineMarkdown(esc(row.text))}${row.why ? `<span class="sugg-why-line">${inlineMarkdown(esc(row.why))}</span>` : ""}</span></li>`,
+              )
+              .join("");
+            return `
+            <tr>
+              <td><span class="sugg-area">${esc(group.area)}</span><button type="button" class="btn btn-ghost btn-small sugg-edit" data-edit-suggestion="${esc(claim.id)}" data-focus="${focusFieldFor(group.area)}">Edit this section</button></td>
+              <td><ul class="sugg-list">${items}</ul></td>
+            </tr>`;
+          })
+          .join("");
+        return `
+      <article class="claim sugg-card">
+        <h3 class="claim-title-text">${esc(claim.point)}</h3>
+        <div class="sugg-compare">
+          <div class="sugg-col is-user">
+            <p class="sugg-col-label">Marked by you</p>
+            <div class="tag-row">${marked}</div>
+          </div>
+          <div class="sugg-col is-agent">
+            <p class="sugg-col-label">Agent thinks</p>
+            <ul class="sugg-agent-list">${agentItems}</ul>
+          </div>
+        </div>
+        <div class="sugg-table-wrap">
+          <table class="sugg-table">
+            <thead>
+              <tr><th scope="col">Area</th><th scope="col">Agent finding</th></tr>
+            </thead>
+            <tbody>${body}</tbody>
+          </table>
+        </div>${actions}
+      </article>`;
+      }
+
+      function renderSuggestions() {
+        // Copies only: suggestions stay out of state.claims so they are never saved to the data file.
+        const claims = levelClaims()
+          .map((claim) => ({
+            ...claim,
+            agentSuggestion:
+              state.suggestions[claim.id] || claim.agentSuggestion,
+          }))
+          .filter((claim) => claim.agentSuggestion);
+        $("suggestionCount").textContent = claims.length;
+        const loaded = Object.keys(state.suggestions).length;
+        const emptyText =
+          state.suggestionsHint ||
+          (loaded
+            ? `${loaded} suggestions were read, but none match the claims at this level in the open data file. Open the data file that holds those claims.`
+            : "No AI suggestions yet. The agent writes them to source/suggestions/suggestions.json and they appear here.");
+        $("suggestionList").innerHTML = claims.length
+          ? claims.map(renderSuggestionCard).join("")
+          : `<p class="empty">${esc(emptyText)}</p>`;
+      }
+
+      function applySuggestionsFile(data) {
+        const list = Array.isArray(data?.suggestions) ? data.suggestions : null;
+        if (!list) throw new Error('the file has no "suggestions" list.');
+        state.suggestions = Object.fromEntries(
+          list
+            .filter((item) => item?.claimId && item.agentSuggestion)
+            .map((item) => [item.claimId, String(item.agentSuggestion)]),
+        );
+        state.suggestionsHint = "";
+        renderSuggestions();
+      }
+
+      async function readSuggestionsFile(handle) {
+        const text = (await (await handle.getFile()).text()).trim();
+        applySuggestionsFile(text ? JSON.parse(text) : {});
+      }
+
+      // Uses the file picked with Reload, else source/suggestions/suggestions.json in the remembered folder.
+      async function suggestionsFileHandle() {
+        const picked = await recallHandle("suggestionsFile");
+        if (picked) return picked;
+        const project = await recallHandle("exportProject");
+        if (!project) return null;
+        try {
+          const root = await sourceRootOf(project);
+          const dir = await root.getDirectoryHandle("suggestions");
+          return await dir.getFileHandle("suggestions.json");
+        } catch (error) {
+          if (error.name === "NotFoundError") return null;
+          throw error;
+        }
+      }
+
+      // Silent on focus; the Reload button may ask for suggestions.json and read access.
+      async function refreshSuggestions(interactive = false) {
+        try {
+          let handle;
+          if (interactive && window.showOpenFilePicker) {
+            [handle] = await window.showOpenFilePicker({
+              types: [
+                {
+                  description: "Suggestions file",
+                  accept: { "application/json": [".json"] },
+                },
+              ],
+            });
+            await rememberHandle("suggestionsFile", handle);
+          } else {
+            handle = await suggestionsFileHandle();
+          }
+          if (!handle) {
+            state.suggestionsHint =
+              "Click Reload and choose suggestions.json to read the agent's replies.";
+            renderSuggestions();
+            showToast(
+              "suggestions.json not found. Click Reload and select the file.",
+              false,
+              false,
+              true,
+            );
+            return;
+          }
+          if ((await handle.queryPermission({ mode: "read" })) !== "granted") {
+            if (!interactive) {
+              state.suggestionsHint =
+                "Click Reload to read the agent's replies from source/suggestions/suggestions.json.";
+              renderSuggestions();
+              showToast(
+                "Select suggestions.json with Reload to grant read access.",
+                false,
+                false,
+                true,
+              );
+              return;
+            }
+            if (
+              (await handle.requestPermission({ mode: "read" })) !== "granted"
+            )
+              return;
+          }
+          await readSuggestionsFile(handle);
+        } catch (error) {
+          if (error.name === "AbortError") return;
+          state.suggestionsHint = `Could not load suggestions: ${error.message}`;
+          renderSuggestions();
+        }
       }
 
       function openFormSections() {
@@ -3934,19 +4326,15 @@
         clearTimeout(autosaveTimer);
         autosaveDirty = false;
         fillEvidenceFields();
-        $("agentSuggestion").value = "";
         showFormError("");
         setEditing(null);
         renderLinks();
         renderImages();
-        state.flow = [];
-        $("flowInput").value = "";
-        renderFlowForm();
       }
 
       function setEditing(id) {
         state.editingId = id;
-        $("formTitle").textContent = id ? "Edit artifact" : "Add an artifact";
+        $("formTitle").textContent = id ? "EDIT ARTIFACT" : "ADD AN ARTIFACT";
         $("saveBtn").textContent = id ? "Update artifact" : "Save artifact";
       }
 
@@ -3993,9 +4381,7 @@
           claim: getStoryHtml(),
           links: [...state.links],
           images: [...state.images],
-          flow: [...state.flow],
           ...readEvidenceFields(),
-          agentSuggestion: $("agentSuggestion").value.trim(),
           status: keepReady ? "ready" : "draft",
           level: state.level,
           createdAt: existing?.createdAt || new Date().toISOString(),
@@ -4045,9 +4431,7 @@
           claim: draft,
           links: [...state.links],
           images: [...state.images],
-          flow: [...state.flow],
           ...readEvidenceFields(),
-          agentSuggestion: $("agentSuggestion").value.trim(),
           status: "ready",
           level: state.level,
           createdAt: new Date().toISOString(),
@@ -4063,9 +4447,18 @@
           await commitClaims(nextClaims);
         } catch (error) {
           showFormError(`Could not save: ${error.message}`);
+          showToast(`Could not save: ${error.message}`, true);
           return;
         }
+        const updating = Boolean(state.editingId);
         resetForm();
+        showToast(
+          updating
+            ? 'Updated and added artifact to the "saved artifact" list'
+            : "Artifact saved.",
+          false,
+          true,
+        );
       }
 
       function editClaim(id) {
@@ -4081,13 +4474,11 @@
             input.checked = claim.competencies.includes(input.value);
           });
         fillEvidenceFields(claim);
-        $("agentSuggestion").value = claim.agentSuggestion || "";
         state.links = claim.links.map(asLink);
         // Drops file-path entries left by exports; they cannot be displayed and block the 6-image cap.
         state.images = (claim.images || []).filter((src) =>
           SAFE_IMAGE.test(src),
         );
-        state.flow = (claim.flow || []).map(String);
         $("linkInput").value = "";
         $("linkLabel").value = "";
         $("draft").innerHTML = sanitizeHtml(claim.claim || "");
@@ -4096,24 +4487,56 @@
         openFormSections();
         renderLinks();
         renderImages();
-        renderFlowForm();
         $("formTitle").scrollIntoView({ behavior: "smooth", block: "start" });
       }
 
       async function deleteClaim(id) {
+        const name =
+          state.claims.find((claim) => claim.id === id)?.point || "Artifact";
         try {
           await commitClaims(state.claims.filter((claim) => claim.id !== id));
         } catch (error) {
           setDataStatus(`Could not delete: ${error.message}`, true);
+          showToast(`Could not delete: ${error.message}`, true);
           return;
         }
         if (id === state.editingId) resetForm();
+        showToast(`Deleted artifact "${name}"`, false, true);
+      }
+
+      // Updates one rendered card in place so the CSS transition can play.
+      function setClaimOpen(card, open) {
+        const details = card.querySelector(".claim-details");
+        details.classList.toggle("is-open", open);
+        details.inert = !open;
+        card
+          .querySelector(".claim-title")
+          .setAttribute("aria-expanded", String(open));
+      }
+
+      function syncToggleAllButton() {
+        const details = [...$("claimList").querySelectorAll(".claim-details")];
+        const allExpanded = details.every((el) =>
+          el.classList.contains("is-open"),
+        );
+        const toggleAll = $("toggleAllBtn");
+        toggleAll.textContent = allExpanded ? "Collapse all" : "Expand all";
+        toggleAll.dataset.toggleAll = allExpanded ? "collapse" : "expand";
       }
 
       function toggleClaimDetails(id) {
-        if (state.expandedClaims.has(id)) state.expandedClaims.delete(id);
-        else state.expandedClaims.add(id);
-        renderClaims();
+        const open = !state.expandedClaims.has(id);
+        if (open) state.expandedClaims.add(id);
+        else state.expandedClaims.delete(id);
+        const card = $("claimList").querySelector(
+          `[data-claim-id="${CSS.escape(id)}"]`,
+        );
+        if (!card) {
+          renderClaims();
+          return;
+        }
+        setClaimOpen(card, open);
+        syncToggleAllButton();
       }
 
       function toggleAllClaims(expand) {
@@ -4124,7 +4547,10 @@
             if (expand) state.expandedClaims.add(claim.id);
             else state.expandedClaims.delete(claim.id);
           });
-        renderClaims();
+        $("claimList")
+          .querySelectorAll("[data-claim-id]")
+          .forEach((card) => setClaimOpen(card, expand));
+        syncToggleAllButton();
       }
 
       let draggedClaimId = null;
@@ -4233,39 +4659,75 @@
         );
       }
 
-      function candidateSlug() {
-        const slug = (state.candidate.name || "candidate")
+      function slugify(text) {
+        return text
           .toLowerCase()
           .replace(/[^a-z0-9]+/g, "-")
           .replace(/^-+|-+$/g, "");
-        return slug || "candidate";
+      }
+
+      function candidateSlug() {
+        return slugify(state.candidate.name || "") || "candidate";
+      }
+
+      // Name_project_level; the project part is skipped when empty.
+      function exportBaseName() {
+        return [
+          candidateSlug(),
+          slugify(state.candidate.project || ""),
+          state.level.toLowerCase(),
+        ]
+          .filter(Boolean)
+          .join("_");
       }
 
       function exportFileName(extension) {
-        return `${candidateSlug()}-${state.level.toLowerCase()}-evidence.${extension}`;
+        return `${exportBaseName()}.${extension}`;
       }
 
-      async function saveExport(blob, fileName, description, mime, extension) {
+      // Picks the project folder once; exports go into its existing source/ folder.
+      async function exportRootFolder() {
+        if (!window.showDirectoryPicker) return null;
+        let project = await recallHandle("exportProject");
+        if (project && (await ensureWritable(project))) {
+          try {
+            return await sourceRootOf(project);
+          } catch (error) {
+            // The remembered folder was moved or deleted; ask again below.
+            if (error.name !== "NotFoundError") throw error;
+          }
+        }
+        project = await window.showDirectoryPicker({ mode: "readwrite" });
+        await rememberHandle("exportProject", project);
+        return sourceRootOf(project);
+      }
+
+      function sourceRootOf(project) {
+        if (project.name === "source") return project;
+        return project.getDirectoryHandle("source");
+      }
+
+      // Writes into source/, replacing any file with the same name.
+      async function saveExport(blob, fileName) {
         try {
-          // startIn opens the dialog in the data file's folder.
-          const handle = await window.showSaveFilePicker({
-            suggestedName: fileName,
-            ...(state.dataFile ? { startIn: state.dataFile } : {}),
-            types: [{ description, accept: { [mime]: [extension] } }],
-          });
-          const writable = await handle.createWritable();
-          await writable.write(blob);
-          await writable.close();
-          showToast(`Saved ${handle.name}`);
+          const root = await exportRootFolder();
+          if (root) {
+            await writeDirFile(root, fileName, blob);
+            showToast(`Saved ${fileName}`);
+            return;
+          }
         } catch (error) {
           if (error.name === "AbortError") return;
-          const link = document.createElement("a");
-          link.href = URL.createObjectURL(blob);
-          link.download = fileName;
-          link.click();
-          URL.revokeObjectURL(link.href);
-          showToast(`Downloaded ${fileName}`);
+          showToast(`Could not save ${fileName}: ${error.message}`, true);
+          return;
         }
+        // Browsers without folder access download the file instead.
+        const link = document.createElement("a");
+        link.href = URL.createObjectURL(blob);
+        link.download = fileName;
+        link.click();
+        URL.revokeObjectURL(link.href);
+        showToast(`Downloaded ${fileName}`);
       }
 
       async function exportMarkdown() {
@@ -4274,26 +4736,22 @@
           return;
         }
         const blob = new Blob([claimsAsMarkdown()], { type: "text/markdown" });
-        await saveExport(
-          blob,
-          exportFileName("md"),
-          "Markdown",
-          "text/markdown",
-          ".md",
-        );
+        await saveExport(blob, exportFileName("md"));
       }
 
       // ---- HTML deck export: index.html + styles.css + data.json + images/ ----
 
-      const DECK_CSS = `:root{--bg:#f3ecdd;--surface:#fffdf7;--surface-alt:#f8f2e5;--border:#e5d9c2;--text:#141413;--muted:#73726c;--primary:#c6613f;--primary-soft:#f8e9e1;--font:Candara,"Segoe UI",system-ui,sans-serif;--serif:Newsreader,Georgia,"Times New Roman",serif}
+      const DECK_CSS = `:root{--bg:#f8f4ea;--surface:#fffefb;--surface-alt:#fcf9f2;--border:#ebe2d0;--text:#141413;--muted:#6f6e68;--primary:#c6613f;--primary-soft:#fbeee8;--font:Candara,"Segoe UI",system-ui,sans-serif;--serif:Newsreader,Georgia,"Times New Roman",serif}
 *{box-sizing:border-box;margin:0;padding:0}
 html,body{height:100%;background:var(--bg);color:var(--text);font-family:var(--font)}
 body{display:grid;place-items:center;overflow:hidden}
-.stage{container-type:size;width:min(100vw,calc(100vh * 16 / 9));aspect-ratio:16/9;background:radial-gradient(ellipse at 25% 15%,rgba(255,255,255,.6),transparent 60%),radial-gradient(ellipse at 85% 100%,rgba(176,140,90,.10),transparent 55%),url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='220' height='220'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='.65' numOctaves='4' stitchTiles='stitch'/%3E%3CfeColorMatrix values='0 0 0 0 .42 0 0 0 0 .33 0 0 0 0 .2 0 0 0 .06 0'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E"),#fbf7ec;position:relative;box-shadow:0 12px 40px rgba(86,60,30,.14);overflow:hidden}
+.stage{container-type:size;width:min(100vw,calc(100vh * 16 / 9));aspect-ratio:16/9;background:radial-gradient(ellipse at 25% 15%,rgba(255,255,255,.6),transparent 60%),radial-gradient(ellipse at 85% 100%,rgba(176,140,90,.10),transparent 55%),url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='220' height='220'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='.75' numOctaves='5' stitchTiles='stitch'/%3E%3CfeColorMatrix values='0 0 0 0 .42 0 0 0 0 .33 0 0 0 0 .2 0 0 0 .18 0'/%3E%3C/filter%3E%3Cfilter id='m'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='.012' numOctaves='3' stitchTiles='stitch'/%3E%3CfeColorMatrix values='0 0 0 0 .5 0 0 0 0 .4 0 0 0 0 .28 0 0 0 .105 0'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3Crect width='100%25' height='100%25' filter='url(%23m)'/%3E%3C/svg%3E"),#fbf7ec;position:relative;box-shadow:0 12px 40px rgba(86,60,30,.14);overflow:hidden}
 .slide{position:absolute;inset:0;padding:5cqw;display:flex;flex-direction:column;gap:2cqw}
 .slide[hidden]{display:none}
-.slide:not([hidden]){animation:slideIn .45s ease both}
-@keyframes slideIn{from{opacity:0;transform:translateY(.8cqw)}to{opacity:1;transform:none}}display:flex;align-items:center;gap:.7cqw;font-size:1.05cqw;font-weight:600;letter-spacing:.14em;text-transform:uppercase;color:var(--muted)}
+.slide:not([hidden]){animation:slideIn .7s cubic-bezier(.22,1,.36,1) both}
+@keyframes slideIn{from{opacity:0;transform:translate3d(1.6cqw,0,0) scale(.985)}to{opacity:1;transform:none}}
+@media (prefers-reduced-motion:reduce){.slide:not([hidden]){animation:none}}
+.kicker{display:flex;align-items:center;gap:.7cqw;font-size:1.05cqw;font-weight:600;letter-spacing:.14em;text-transform:uppercase;color:var(--muted)}
 .kicker::before{content:"";width:.5cqw;height:.5cqw;border-radius:50%;background:var(--primary)}
 h1,h2{font-family:var(--serif);font-weight:700}
 h1{font-size:5.7cqw;line-height:1.05}
@@ -4306,10 +4764,10 @@ h2{font-size:2.6cqw;line-height:1.2}
 .stat{border:1px solid var(--border);border-top:.25cqw solid var(--primary);background:var(--surface);border-radius:1.2cqw;padding:1.5cqw 1.8cqw;box-shadow:0 .2cqw .8cqw rgba(86,60,30,.06)}
 .stat b{display:block;font:700 3.2cqw/1.1 var(--serif);font-variant-numeric:lining-nums}
 .stat span{display:block;margin-top:.4cqw;font-size:.97cqw;font-weight:600;letter-spacing:.08em;text-transform:uppercase;color:var(--muted)}
-.toc{list-style:none;display:grid;grid-template-columns:minmax(0,1fr);align-content:start;flex:1;min-height:0;overflow:auto}
+.toc{list-style:none;display:grid;grid-template-columns:minmax(0,1fr);align-content:start;flex:1;min-height:0;overflow:auto;scrollbar-width:thin;scrollbar-color:var(--border) transparent}
 .toc li{min-width:0}
 .toc button{display:flex;align-items:baseline;gap:1.2cqw;width:100%;text-align:left;background:none;border:0;border-bottom:1px solid var(--border);padding:.55cqw .4cqw;font:inherit;font-size:1.2cqw;color:var(--text);cursor:pointer}
-.toc button:hover{background:var(--surface-alt)}
+.toc button{transition:background-color .6s cubic-bezier(.16,1,.3,1),padding-left .6s cubic-bezier(.16,1,.3,1),color .6s ease}.toc button:hover{background:var(--primary-soft);padding-left:1.2cqw;color:var(--primary)}
 .toc button:focus-visible{outline:3px solid var(--primary-soft);border-color:var(--primary)}
 .toc .no{color:var(--primary);font-weight:700;min-width:2cqw}
 .toc .t{flex:1;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
@@ -4321,7 +4779,7 @@ h2{font-size:2.6cqw;line-height:1.2}
 .tag{display:inline-flex;align-items:center;gap:.5cqw;border:1px solid var(--c-bd,var(--border));background:var(--c-bg,var(--surface-alt));color:var(--c-tx,var(--text));border-radius:99cqw;padding:.3cqw .8cqw;font-size:1cqw;font-weight:600}
 .tag .dot{width:.55cqw;height:.55cqw;border-radius:50%;background:var(--c-solid)}
 .links{display:flex;flex-wrap:wrap;align-items:center;gap:.5cqw 1.8cqw;font-size:1.05cqw}
-.links a{display:flex;align-items:baseline;gap:.6cqw;color:var(--primary);overflow-wrap:anywhere}
+.links a{display:flex;align-items:baseline;gap:.6cqw;color:var(--primary);overflow-wrap:anywhere;transition:transform .5s cubic-bezier(.16,1,.3,1),text-decoration-color .4s ease}.links a:hover{transform:translateX(.3cqw);text-decoration:underline}
 .links a::before,.prose a::before{content:"";display:inline-block;flex:none;width:1em;height:1em;margin-right:.3em;vertical-align:-.12em;background:currentColor;-webkit-mask:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='black' stroke-width='2' stroke-linecap='round'%3E%3Cpath d='M10 13a5 5 0 0 0 7.07 0l3-3a5 5 0 0 0-7.07-7.07l-1.7 1.7M14 11a5 5 0 0 0-7.07 0l-3 3a5 5 0 0 0 7.07 7.07l1.7-1.7'/%3E%3C/svg%3E") center/contain no-repeat;mask:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='black' stroke-width='2' stroke-linecap='round'%3E%3Cpath d='M10 13a5 5 0 0 0 7.07 0l3-3a5 5 0 0 0-7.07-7.07l-1.7 1.7M14 11a5 5 0 0 0-7.07 0l-3 3a5 5 0 0 0 7.07 7.07l1.7-1.7'/%3E%3C/svg%3E") center/contain no-repeat}
 .figure{display:grid;grid-template-columns:1fr auto 1fr;align-items:stretch;gap:.8cqw;padding:.8cqw 1.1cqw;background:var(--surface-alt);border:1px solid var(--border);border-radius:1.2cqw}
 .figure>div{min-width:0;display:flex;flex-direction:column;gap:.3cqw}.figure b{display:block;font:700 1.5cqw/1.25 var(--serif);overflow-wrap:break-word}
@@ -4337,9 +4795,6 @@ h2{font-size:2.6cqw;line-height:1.2}
 .prose .lbl{margin-bottom:.5cqw}
 .lbl.dark{color:var(--text);font-size:1.3cqw}
 .prose a{color:var(--primary)}
-.flow{display:flex;flex-wrap:wrap;align-items:center;gap:.6cqw;font-size:1cqw}
-.flow span{border:1px solid var(--border);background:var(--surface-alt);border-radius:.7cqw;padding:.35cqw .8cqw}
-.flow i{font-style:normal;color:var(--primary)}
 .shots{flex:none;display:flex;flex-direction:column;gap:.6cqw}
 .grid-shots{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:1.6cqw}
 .grid-shots .thumb{position:relative;left:auto;top:auto;z-index:auto;width:100%;height:auto;aspect-ratio:16/10;box-shadow:none}
@@ -4347,11 +4802,11 @@ h2{font-size:2.6cqw;line-height:1.2}
 .thumbs{position:relative;width:14cqw;height:7.4cqw}
 .thumb{position:absolute;left:calc(var(--i)*2.4cqw);top:calc(var(--i)*.8cqw);z-index:var(--i);width:8cqw;height:5cqw;padding:0;border:1px solid var(--border);border-radius:.6cqw;background:var(--surface-alt);overflow:hidden;cursor:zoom-in;box-shadow:0 .2cqw .6cqw rgba(86,60,30,.12)}
 .thumb img{width:100%;height:100%;object-fit:cover;display:block}
-.thumb:hover{border-color:var(--primary)}
+.thumb{transition:transform .6s cubic-bezier(.16,1,.3,1),border-color .4s ease,box-shadow .6s cubic-bezier(.16,1,.3,1)}.thumb:hover{border-color:var(--primary);transform:translateY(-.3cqw) scale(1.03);box-shadow:0 1cqw 2.2cqw rgba(86,60,30,.2)}
 .thumb:focus-visible,.z-arrow:focus-visible,.nav button:focus-visible{outline:3px solid var(--primary-soft);border-color:var(--primary)}
 .nav{position:absolute;right:2cqw;top:1.2cqw;display:flex;gap:.8cqw;align-items:center;font-size:1.092cqw;color:var(--muted)}
 .count{margin-left:.4cqw}
-.nav button{border:1px solid var(--border);background:var(--surface);border-radius:.8cqw;padding:.35cqw 1cqw;font:inherit;color:var(--text);cursor:pointer;transition:background .15s,border-color .15s,color .15s}
+.nav button{border:1px solid var(--border);background:var(--surface);border-radius:.8cqw;padding:.35cqw 1cqw;font:inherit;color:var(--text);cursor:pointer;transition:background .4s ease,border-color .4s ease,color .4s ease}
 .nav button:hover{background:var(--primary-soft);border-color:var(--primary);color:var(--primary)}
 .bar{position:absolute;left:0;bottom:0;height:.35cqw;background:var(--primary);transition:width .2s}
 .zoom{position:fixed;inset:0;background:rgba(20,20,19,.92);display:grid;place-items:center;z-index:9;cursor:zoom-out}
@@ -4362,6 +4817,7 @@ h2{font-size:2.6cqw;line-height:1.2}
 .z-arrow[data-z=next]{right:2vw}
 .z-count{position:absolute;bottom:2vh;left:0;right:0;text-align:center;color:#fff;font-size:13.3px}
 .zoom.one .z-arrow,.zoom.one .z-count{display:none}
+.deck-foot{position:absolute;left:5cqw;right:5cqw;bottom:1.8cqw;padding-top:.5cqw;border-top:1px solid var(--border);font-size:.85cqw;letter-spacing:.04em;color:var(--muted);pointer-events:none}
 @page{size:297mm 167mm;margin:0}
 @page{size:landscape;margin:0}@media print{body{display:block;overflow:visible;height:auto;background:#fff}.stage{container-type:inline-size;width:100%;height:auto;aspect-ratio:auto;box-shadow:none;overflow:visible}.slide,.slide[hidden]{position:relative;display:flex;aspect-ratio:16/9;break-after:page;overflow:hidden}.nav,.count,.bar,.zoom,.z-arrow{display:none}.slide{animation:none}}`;
 
@@ -4373,27 +4829,6 @@ document.addEventListener('keydown',function(e){var k=e.key;if(!zoom.hidden){if(
 function zshow(n){zi=(n+zs.length)%zs.length;zimg.classList.remove('swap');void zimg.offsetWidth;zimg.classList.add('swap');zimg.src=zs[zi].src;zimg.alt=zs[zi].alt;zcount.textContent=(zi+1)+' / '+zs.length;zoom.classList.toggle('one',zs.length<2)}
 document.addEventListener('click',function(e){var g=e.target.closest('[data-go]');if(g){go(parseInt(g.getAttribute('data-go'),10));return}var z=e.target.closest('[data-z]');if(z){zshow(zi+(z.getAttribute('data-z')==='prev'?-1:1));return}var t=e.target.closest('.thumb');if(t){var all=[].slice.call(t.parentNode.querySelectorAll('.thumb'));zs=all.map(function(b){var m=b.querySelector('img');return{src:m.src,alt:m.alt}});zshow(all.indexOf(t));zoom.hidden=false}else if(zoom.contains(e.target)){closeZoom()}});
 go((parseInt(location.hash.slice(1),10)||1)-1);})();`;
-
-      const DECK_MONTHS = [
-        "jan",
-        "feb",
-        "mar",
-        "apr",
-        "may",
-        "jun",
-        "jul",
-        "aug",
-        "sep",
-        "oct",
-        "nov",
-        "dec",
-      ];
-
-      // Folder name: name_level_month_day_hhmm.
-      function deckFolderName(date = new Date()) {
-        const two = (n) => String(n).padStart(2, "0");
-        return `${candidateSlug()}_${state.level.toLowerCase()}_${DECK_MONTHS[date.getMonth()]}_${two(date.getDate())}_${two(date.getHours())}${two(date.getMinutes())}`;
-      }
 
       function dataUrlImage(url) {
         if (!SAFE_IMAGE.test(url)) return null;
@@ -4424,6 +4859,10 @@ go((parseInt(location.hash.slice(1),10)||1)-1);})();`;
         const criticalDone = critical.filter((c) => covered(c.code)).length;
         const persona =
           LEVELS.find((l) => l.code === state.level)?.persona || "";
+        const footText = [name || "Candidate", project, positionLabel()]
+          .filter(Boolean)
+          .join("  \u2022  ");
+        const foot = `<footer class="deck-foot">${esc(footText)}</footer>`;
 
         const slides = [];
         slides.push(`<section class="slide s-title">
@@ -4471,7 +4910,6 @@ go((parseInt(location.hash.slice(1),10)||1)-1);})();`;
             claim.before || claim.after
               ? `<div class="figure"><div><span>Before</span><b>${esc(claim.before || "?")}</b></div><i class="arrow">→</i><div><span>After</span><b>${esc(claim.after || "?")}</b></div></div>`
               : "";
-          const steps = (claim.flow || []).map(String);
           const images = shots[claim.id] || [];
           slides.push(`<section class="slide">
   <span class="kicker">${esc(label)}${done ? ` · ${esc(done)}` : ""}</span>
@@ -4485,7 +4923,6 @@ go((parseInt(location.hash.slice(1),10)||1)-1);})();`;
     <div class="col">
       ${figure}
       ${rows.length ? `<div class="lbl dark">Impacts</div><dl class="rows">${rows.map(([key, value]) => `<dt>${esc(key)}</dt><dd>${esc(value)}</dd>`).join("")}</dl>` : ""}
-      ${steps.length ? `<div class="flow">${steps.map((s) => `<span>${esc(s)}</span>`).join("<i>→</i>")}</div>` : ""}
     </div>
   </div>
 </section>`);
@@ -4523,7 +4960,17 @@ go((parseInt(location.hash.slice(1),10)||1)-1);})();`;
 </head>
 <body>
 <main class="stage">
-${slides.join("\n").replace("@@TOC@@", () => tocRows.join("") + (claims.length > TOC_LIMIT ? `<li class="more">and ${claims.length - TOC_LIMIT} more artifacts</li>` : ""))}
+${slides
+  .map((s) => s.replace(/<\/section>$/, () => `${foot}</section>`))
+  .join("\n")
+  .replace(
+    "@@TOC@@",
+    () =>
+      tocRows.join("") +
+      (claims.length > TOC_LIMIT
+        ? `<li class="more">and ${claims.length - TOC_LIMIT} more artifacts</li>`
+        : ""),
+  )}
 <nav class="nav" aria-label="Slides"><button type="button" id="toc" aria-label="Back to contents">Contents</button><span class="count" id="count" aria-live="polite"></span></nav>
 <div class="bar" id="bar"></div>
 </main>
@@ -4616,20 +5063,21 @@ ${slides.join("\n").replace("@@TOC@@", () => tocRows.join("") + (claims.length >
           showToast(`No ${state.level} artifacts to export yet`);
           return;
         }
-        if (!window.showDirectoryPicker) {
-          showToast(
-            "This browser cannot save folders. Use Edge or Chrome.",
-            true,
-          );
-          return;
-        }
         try {
-          const parent = await window.showDirectoryPicker({
-            mode: "readwrite",
-            ...(state.dataFile ? { startIn: state.dataFile } : {}),
+          const root = await exportRootFolder();
+          if (!root) {
+            showToast(
+              "This browser cannot save folders. Use Edge or Chrome.",
+              true,
+            );
+            return;
+          }
+          const folder = exportBaseName();
+          // Replaces the previous export with the same name.
+          await root.removeEntry(folder, { recursive: true }).catch(() => {});
+          const dir = await root.getDirectoryHandle(folder, {
+            create: true,
           });
-          const folder = deckFolderName();
-          const dir = await parent.getDirectoryHandle(folder, { create: true });
           const shots = {};
           const files = [];
           const snapshot = claims.map((claim, index) => {
@@ -4671,7 +5119,7 @@ ${slides.join("\n").replace("@@TOC@@", () => tocRows.join("") + (claims.length >
               2,
             ),
           );
-          showToast(`Saved HTML slides ${folder}`);
+          showToast(`Saved html/${folder}`);
           const preview = deckPreviewHtml(claims, $("storyToggle").checked);
           if (state.deckUrl) URL.revokeObjectURL(state.deckUrl);
           state.deckUrl = URL.createObjectURL(
@@ -5035,6 +5483,46 @@ ${slides.join("\n").replace("@@TOC@@", () => tocRows.join("") + (claims.length >
               lh: 1.2,
               gap,
             });
+          const LINK_PATH = [
+            ["M", 10, 13],
+            ["C", 11.952, 14.952, 15.118, 14.952, 17.07, 13],
+            ["L", 20.07, 10],
+            ["C", 22.02, 8.048, 22.02, 4.88, 20.07, 2.93],
+            ["C", 18.118, 0.978, 14.952, 0.978, 13, 2.93],
+            ["L", 11.3, 4.63],
+            ["M", 14, 11],
+            ["C", 12.048, 9.048, 8.882, 9.048, 6.93, 11],
+            ["L", 3.93, 14],
+            ["C", 1.98, 15.952, 1.98, 19.12, 3.93, 21.07],
+            ["C", 5.882, 23.022, 9.048, 23.022, 11, 21.07],
+            ["L", 12.7, 19.37],
+          ];
+          const linkIcon = (x, base, size) => {
+            const k = size / 24;
+            const ops = LINK_PATH.map(([cmd, ...n]) => {
+              const pts = [];
+              for (let i = 0; i < n.length; i += 2)
+                pts.push(`${f(x + n[i] * k)} ${f(base + (24 - n[i + 1]) * k)}`);
+              return `${pts.join(" ")} ${cmd.toLowerCase()}`;
+            });
+            page.ops.push(
+              `q ${C.primary} RG ${f(2 * k)} w 1 J 1 j ${ops.join(" ")} S Q`,
+            );
+          };
+          const linkRow = (text, size, font, target) => {
+            ensure(size * 1.35);
+            const top = y;
+            write(text, {
+              size,
+              font,
+              color: C.primary,
+              link: target,
+              lh: 1.35,
+              indent: 14,
+              gap: 6,
+            });
+            linkIcon(left, top - size * 1.35, size);
+          };
           const divider = () => {
             ensure(40);
             y -= 10;
@@ -5311,36 +5799,11 @@ ${slides.join("\n").replace("@@TOC@@", () => tocRows.join("") + (claims.length >
             chips(
               claim.competencies.map((code) => ({ label: nameOf(code), code })),
             );
-            if (claim.links.length) {
-              sectionHead("Proof");
-              claim.links.map(asLink).forEach(({ url, label }) => {
-                const target = /^https?:\/\//i.test(url) ? url : null;
-                if (label) {
-                  write(label, {
-                    size: 10,
-                    font: "F2",
-                    color: C.primary,
-                    link: target,
-                    lh: 1.35,
-                  });
-                  write(url, {
-                    size: 8,
-                    color: C.muted,
-                    gap: 6,
-                    link: target,
-                    lh: 1.35,
-                  });
-                } else {
-                  write(url, {
-                    size: 9,
-                    color: C.primary,
-                    link: target,
-                    gap: 6,
-                    lh: 1.35,
-                  });
-                }
-              });
-            }
+            claim.links.map(asLink).forEach(({ url, label }) => {
+              const target = /^https?:\/\//i.test(url) ? url : null;
+              if (label) linkRow(label, 10, "F2", target);
+              else linkRow(url, 9, "F1", target);
+            });
             const rows = impactRows(claim).filter(
               ([key]) => key !== "Proof strength",
             );
@@ -5391,9 +5854,9 @@ ${slides.join("\n").replace("@@TOC@@", () => tocRows.join("") + (claims.length >
               `${C.border} RG 0.6 w ${MARGIN} ${FOOT_Y + 14} m ${PAGE_W - MARGIN} ${FOOT_Y + 14} l S`,
             );
             put(
-              [name || "Candidate", `${state.level} evidence`].join(
-                "  \u2022  ",
-              ),
+              [name || "Candidate", project, positionLabel()]
+                .filter(Boolean)
+                .join("  \u2022  "),
               MARGIN,
               FOOT_Y,
               8,
@@ -5576,13 +6039,7 @@ ${slides.join("\n").replace("@@TOC@@", () => tocRows.join("") + (claims.length >
           showToast(`Could not build the PDF: ${error.message}`);
           return;
         }
-        await saveExport(
-          blob,
-          exportFileName("pdf"),
-          "PDF",
-          "application/pdf",
-          ".pdf",
-        );
+        await saveExport(blob, exportFileName("pdf"));
       }
 
       function setDataStatus(message, isError = false) {
@@ -5590,8 +6047,6 @@ ${slides.join("\n").replace("@@TOC@@", () => tocRows.join("") + (claims.length >
         $("dataStatus").classList.toggle("is-error", isError);
         if (isError) {
           document.querySelector(".data-bar").classList.remove("is-connected");
-          $("connNote").textContent =
-            "Not connected. Choose or create a data file to save.";
         }
       }
 
@@ -5610,29 +6065,37 @@ ${slides.join("\n").replace("@@TOC@@", () => tocRows.join("") + (claims.length >
         });
       }
 
-      async function rememberDataFile(handle) {
+      async function rememberHandle(key, handle) {
         const db = await openDataDb();
         await new Promise((resolve, reject) => {
           const tx = db.transaction("handles", "readwrite");
-          tx.objectStore("handles").put(handle, "dataFile");
+          tx.objectStore("handles").put(handle, key);
           tx.oncomplete = resolve;
           tx.onerror = () => reject(tx.error);
         });
         db.close();
       }
 
-      async function recallDataFile() {
+      function rememberDataFile(handle) {
+        return rememberHandle("dataFile", handle);
+      }
+
+      async function recallHandle(key) {
         const db = await openDataDb();
         const handle = await new Promise((resolve, reject) => {
           const request = db
             .transaction("handles")
             .objectStore("handles")
-            .get("dataFile");
+            .get(key);
           request.onsuccess = () => resolve(request.result || null);
           request.onerror = () => reject(request.error);
         });
         db.close();
         return handle;
+      }
+
+      function recallDataFile() {
+        return recallHandle("dataFile");
       }
 
       async function readDataFile(handle) {
@@ -5832,15 +6295,39 @@ ${slides.join("\n").replace("@@TOC@@", () => tocRows.join("") + (claims.length >
       }
 
       let toastTimer;
-      function showToast(message, isError = false) {
+      const TOAST_ICONS = {
+        success:
+          '<svg viewBox="0 0 24 24"><path d="M5 12.5l4.2 4.2L19 7"/></svg>',
+        error:
+          '<svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="9"/><path d="M12 7.5v5.5M12 16.5h.01"/></svg>',
+        info: '<svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="9"/><path d="M12 11v5M12 8h.01"/></svg>',
+        warning:
+          '<svg viewBox="0 0 24 24"><path d="M12 4l9 16H3z"/><path d="M12 10v4M12 17h.01"/></svg>',
+      };
+      function showToast(
+        message,
+        isError = false,
+        isSuccess = false,
+        isWarning = false,
+      ) {
         const toast = $("toast");
-        toast.textContent = message;
+        const tone = isError
+          ? "error"
+          : isSuccess
+            ? "success"
+            : isWarning
+              ? "warning"
+              : "info";
+        $("toastIcon").innerHTML = TOAST_ICONS[tone];
+        $("toastText").textContent = message;
         toast.classList.toggle("is-error", isError);
+        toast.classList.toggle("is-success", isSuccess);
+        toast.classList.toggle("is-warning", isWarning);
         toast.classList.add("is-visible");
         clearTimeout(toastTimer);
         toastTimer = setTimeout(
           () => toast.classList.remove("is-visible"),
-          isError ? 8000 : 3200,
+          isError ? 8000 : isSuccess ? 5000 : isWarning ? 6000 : 3200,
         );
       }
 
@@ -5862,8 +6349,9 @@ ${slides.join("\n").replace("@@TOC@@", () => tocRows.join("") + (claims.length >
         $("candidateName").value = state.candidate.name;
         $("candidateProject").value = state.candidate.project;
         updateStartEnabled();
-        $("connNote").textContent =
-          `Connected. Saving to ${handle.name} (${n} artifact${n === 1 ? "" : "s"}). Hand edits reload when you return to the app window.`;
+        setDataStatus(
+          `Connected. Saving to ${handle.name} (${n} artifact${n === 1 ? "" : "s"}). Hand edits reload when you return to the app window.`,
+        );
         document.querySelector(".data-bar").classList.add("is-connected");
         $("backupBtn").hidden = false;
       }
@@ -5943,6 +6431,7 @@ ${slides.join("\n").replace("@@TOC@@", () => tocRows.join("") + (claims.length >
         }
         await rememberDataFile(handle);
         state.dataFile = handle;
+        state.recalledHandle = null;
         // An open edit belongs to the previous file; saving it here would overwrite or drop an item.
         if (state.editingId) resetForm();
         state.claims = claims;
@@ -5950,6 +6439,36 @@ ${slides.join("\n").replace("@@TOC@@", () => tocRows.join("") + (claims.length >
         renderCoverage();
         showConnected(handle);
         return true;
+      }
+
+      // Returns the existing source/working-json/ folder, or null without folder access.
+      async function workingJsonFolder() {
+        if (!window.showDirectoryPicker) return null;
+        try {
+          return await (
+            await exportRootFolder()
+          ).getDirectoryHandle("working-json");
+        } catch (error) {
+          if (error.name !== "NotFoundError") throw error;
+        }
+        // The remembered folder has no source/working-json; ask for the project folder again.
+        const project = await window.showDirectoryPicker({ mode: "readwrite" });
+        await rememberHandle("exportProject", project);
+        return (await sourceRootOf(project)).getDirectoryHandle("working-json");
+      }
+
+      // Creates the first free name in the folder, so an existing data file is never opened by accident.
+      async function newDataFileHandle(dir, fileName) {
+        const base = fileName.replace(/\.json$/, "");
+        for (let n = 1; ; n++) {
+          const name = n === 1 ? fileName : `${base}-${n}.json`;
+          try {
+            await dir.getFileHandle(name);
+          } catch (error) {
+            if (error.name !== "NotFoundError") throw error;
+            return dir.getFileHandle(name, { create: true });
+          }
+        }
       }
 
       async function onCreateClick() {
@@ -5961,20 +6480,24 @@ ${slides.join("\n").replace("@@TOC@@", () => tocRows.join("") + (claims.length >
         }
         state.candidate = { name, project };
         try {
-          const handle = await window.showSaveFilePicker({
-            suggestedName: `${
-              name
-                .toLowerCase()
-                .replace(/[^a-z0-9]+/g, "-")
-                .replace(/^-+|-+$/g, "") || "candidate"
-            }-${$("levelSelect").value.toLowerCase()}.json`,
-            types: [
-              {
-                description: "JSON",
-                accept: { "application/json": [".json"] },
-              },
-            ],
-          });
+          const suggestedName = `${
+            name
+              .toLowerCase()
+              .replace(/[^a-z0-9]+/g, "-")
+              .replace(/^-+|-+$/g, "") || "candidate"
+          }-${$("levelSelect").value.toLowerCase()}.json`;
+          const folder = await workingJsonFolder();
+          const handle = folder
+            ? await newDataFileHandle(folder, suggestedName)
+            : await window.showSaveFilePicker({
+                suggestedName,
+                types: [
+                  {
+                    description: "JSON",
+                    accept: { "application/json": [".json"] },
+                  },
+                ],
+              });
           state.pendingHandle = null;
           if (!(await ensureWritable(handle))) {
             state.pendingHandle = handle;
@@ -6018,6 +6541,8 @@ ${slides.join("\n").replace("@@TOC@@", () => tocRows.join("") + (claims.length >
           : "Create a new data file";
       }
 
+      // Open existing always shows the picker, so any JSON file can be chosen.
+      // Only the Grant access state reuses the file that failed permission.
       async function onConnectClick() {
         try {
           const handle =
@@ -6042,6 +6567,17 @@ ${slides.join("\n").replace("@@TOC@@", () => tocRows.join("") + (claims.length >
         }
       }
 
+      async function onReconnectRecalled(handle) {
+        if (state.recalledHandle !== handle) return;
+        state.recalledHandle = null;
+        try {
+          if (await connectDataFile(handle))
+            showToast(`Reconnected to ${handle.name}`);
+        } catch (error) {
+          setDataStatus(`Could not reconnect: ${error.message}`, true);
+        }
+      }
+
       async function restoreDataFile() {
         if (!window.showOpenFilePicker || !window.showSaveFilePicker) {
           setDataStatus(
@@ -6060,19 +6596,15 @@ ${slides.join("\n").replace("@@TOC@@", () => tocRows.join("") + (claims.length >
           ) {
             await connectDataFile(handle);
           } else {
-            state.pendingHandle = handle;
-            setConnectButton(
-              "Reconnect",
-              "Reconnect to the data file you used last time",
-            );
+            // Keep the button as Open existing so another file can be chosen.
+            state.recalledHandle = handle;
             setDataStatus(
-              `Reconnecting to ${handle.name} on your first click\u2026`,
+              `Click anywhere on the page to reconnect to ${handle.name}, or choose another file with Open existing.`,
             );
             // Browsers require a user gesture to restore access, so reconnect on the first one.
             const reconnect = (event) => {
               if (event.target.closest?.("#createBtn, #connectBtn")) return;
-              if (state.pendingHandle !== handle) return;
-              onConnectClick();
+              onReconnectRecalled(handle);
             };
             document.addEventListener("pointerdown", reconnect, { once: true });
           }
@@ -6109,7 +6641,11 @@ ${slides.join("\n").replace("@@TOC@@", () => tocRows.join("") + (claims.length >
         $("tabTagger").setAttribute("aria-selected", String(tagger));
         $("tabSuggestions").setAttribute("aria-selected", String(suggestions));
         $("tabHowto").setAttribute("aria-selected", String(howto));
-        if (suggestions) showAiSnackbar();
+        if (suggestions) {
+          renderSuggestions();
+          refreshSuggestions();
+          showAiSnackbar();
+        }
       }
 
       function bindEvents() {
@@ -6240,40 +6776,25 @@ ${slides.join("\n").replace("@@TOC@@", () => tocRows.join("") + (claims.length >
           scheduleAutosave();
         });
 
-        $("flowList").addEventListener("click", (event) => {
-          const index = event.target.dataset.removeFlow;
-          if (index === undefined) return;
-          state.flow.splice(Number(index), 1);
-          renderFlowForm();
-          scheduleAutosave();
-        });
-        $("addFlowBtn").addEventListener("click", addFlowStep);
-        $("flowInput").addEventListener("keydown", (event) => {
-          if (event.key !== "Enter") return;
-          event.preventDefault();
-          addFlowStep();
-        });
-
-        document.addEventListener("click", (event) => {
-          const step = event.target.closest(".flow-step");
-          if (step) selectFlowStep(step);
-        });
-        document.addEventListener("keydown", (event) => {
-          const step = event.target.closest(".flow-step");
-          if (!step || (event.key !== "Enter" && event.key !== " ")) return;
-          event.preventDefault();
-          selectFlowStep(step);
-        });
         $("saveBtn").addEventListener("click", () => saveClaim());
         $("agentBtn").addEventListener("click", copyForAgent);
+        $("reloadSuggestionsBtn").addEventListener("click", () =>
+          refreshSuggestions(true),
+        );
         $("suggestionList").addEventListener("click", (event) => {
-          const id = event.target.closest("[data-edit-suggestion]")?.dataset
-            .editSuggestion;
-          if (!id) return;
+          const button = event.target.closest("[data-edit-suggestion]");
+          if (!button) return;
           showView("tagger");
-          editClaim(id);
+          editClaim(button.dataset.editSuggestion);
+          if (button.dataset.focus) $(button.dataset.focus).focus();
         });
         $("clearBtn").addEventListener("click", resetForm);
+        $("addArtifactBtn").addEventListener("click", () => {
+          if (state.editingId) resetForm();
+          formSections().forEach((section) => (section.open = true));
+          $("formCard").scrollIntoView({ behavior: "smooth", block: "start" });
+          $("point").focus({ preventScroll: true });
+        });
         $("toggleAllBtn").addEventListener("click", (event) =>
           toggleAllClaims(event.currentTarget.dataset.toggleAll === "expand"),
         );
@@ -6428,7 +6949,10 @@ ${slides.join("\n").replace("@@TOC@@", () => tocRows.join("") + (claims.length >
         $("createBtn").addEventListener("click", onCreateClick);
         $("backupBtn").addEventListener("click", backupData);
         initMonthPicker();
-        window.addEventListener("focus", checkExternalChanges);
+        window.addEventListener("focus", () => {
+          checkExternalChanges();
+          refreshSuggestions();
+        });
       }
 
       renderCompetencyPicker();
@@ -6438,6 +6962,7 @@ ${slides.join("\n").replace("@@TOC@@", () => tocRows.join("") + (claims.length >
       renderClaims();
       renderCoverage();
       restoreDataFile();
+      refreshSuggestions();
     </script>
     <script id="pdfFonts">
       // Latin subsets of Figtree (400, 600) and Newsreader (600, 400), OFL licensed; used only for PDF export.

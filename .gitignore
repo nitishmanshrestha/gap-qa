@@ -1,5 +1,5 @@
-# Personal data: claims, exported PDFs and backups. Never commit.
-source/*
-!source/.gitkeep
-*-evidence.pdf
+# Agent suggestions: generated output, not committed.
+*suggestions*.json
+# Backups: never commit.
 *-backup-*.json
+/source

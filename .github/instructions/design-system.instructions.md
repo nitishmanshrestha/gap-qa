@@ -11,13 +11,13 @@ Warm, paper-like, calm. Restrained colour. Colour carries meaning (tier), not de
 
 | Token                     | Value                                       | Use                                   |
 | ------------------------- | ------------------------------------------- | ------------------------------------- |
-| `--bg`                    | `#f3ecdd`                                   | page background                       |
-| `--surface`               | `#fffdf7`                                   | cards, popovers                       |
-| `--surface-alt`           | `#f8f2e5`                                   | inputs, tiles                         |
-| `--border`                | `#e5d9c2`                                   | all borders; hover `#cdbd9c`          |
-| `--text` / `--text-muted` | `#141413` / `#73726c`                       | body / secondary                      |
-| `--primary`               | `#c6613f` (hover `#ae5130`, soft `#f8e9e1`) | main actions, selection               |
-| `--danger`                | `#8f3a22` (soft `#f3e6df`)                  | destructive                           |
+| `--bg`                    | `#f8f4ea`                                   | page background                       |
+| `--surface`               | `#fffefb`                                   | cards, popovers                       |
+| `--surface-alt`           | `#fcf9f2`                                   | inputs, tiles                         |
+| `--border`                | `#ebe2d0`                                   | all borders; hover `#d6c8a9`          |
+| `--text` / `--text-muted` | `#141413` / `#6f6e68`                       | body / secondary                      |
+| `--primary`               | `#c6613f` (hover `#ae5130`, soft `#fbeee8`) | main actions, selection               |
+| `--danger`                | `#9a3a3a` (soft `#f5e4e3`)                  | destructive                           |
 | `--radius-sm/md/lg`       | 10 / 14 / 20 px                             | inputs and buttons / popovers / cards |
 | `--space-1..6`            | 4 / 8 / 12 / 16 / 24 / 32 px                | all spacing                           |
 | `--shadow-sm/md`          | warm brown shadows                          | no cool or black shadows              |
