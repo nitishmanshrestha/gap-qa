@@ -2297,8 +2297,9 @@
               <span aria-hidden="true">&#10003;</span>
             </span>
             <span class="data-status" id="dataStatus"
-              >Enter a name and pick a level, then create or open a data
-              file.</span
+              >Enter a name and pick a level, then create or open a data file.
+              Browsers cannot open the C: drive root itself, so create a folder
+              on C: (for example C:\Stitch) and pick that.</span
             >
             <span class="data-actions">
               <button
@@ -2960,7 +2961,7 @@
                   Existing file: loaded. New file: created. Choose
                   <strong>Replace</strong> if asked; your data is kept.
                 </li>
-                <li>Edge or Chrome only.</li>
+                <li>Edge, Chrome or Brave only.</li>
               </ul>
               <div class="howto-sub">
                 <h3>Check your level</h3>
@@ -3173,7 +3174,7 @@
           </details>
           <details>
             <summary>This browser cannot create or save data files</summary>
-            <p>Open the app in Microsoft Edge or Chrome.</p>
+            <p>Open the app in Microsoft Edge, Chrome or Brave.</p>
           </details>
           <details>
             <summary>Access refused</summary>
@@ -5105,7 +5106,7 @@ ${slides
           const root = await exportRootFolder();
           if (!root) {
             showToast(
-              "This browser cannot save folders. Use Edge or Chrome.",
+              "This browser cannot save folders. Use Edge, Chrome or Brave.",
               true,
             );
             return;
@@ -6479,36 +6480,6 @@ ${slides
         return true;
       }
 
-      // Returns the existing source/working-json/ folder, or null without folder access.
-      async function workingJsonFolder() {
-        if (!window.showDirectoryPicker) return null;
-        try {
-          return await (
-            await exportRootFolder()
-          ).getDirectoryHandle("working-json");
-        } catch (error) {
-          if (error.name !== "NotFoundError") throw error;
-        }
-        // The remembered folder has no source/working-json; ask for the project folder again.
-        const project = await window.showDirectoryPicker({ mode: "readwrite" });
-        await rememberHandle("exportProject", project);
-        return (await sourceRootOf(project)).getDirectoryHandle("working-json");
-      }
-
-      // Creates the first free name in the folder, so an existing data file is never opened by accident.
-      async function newDataFileHandle(dir, fileName) {
-        const base = fileName.replace(/\.json$/, "");
-        for (let n = 1; ; n++) {
-          const name = n === 1 ? fileName : `${base}-${n}.json`;
-          try {
-            await dir.getFileHandle(name);
-          } catch (error) {
-            if (error.name !== "NotFoundError") throw error;
-            return dir.getFileHandle(name, { create: true });
-          }
-        }
-      }
-
       async function onCreateClick() {
         const name = $("candidateName").value.trim();
         const project = $("candidateProject").value.trim();
@@ -6524,18 +6495,15 @@ ${slides
               .replace(/[^a-z0-9]+/g, "-")
               .replace(/^-+|-+$/g, "") || "candidate"
           }-${$("levelSelect").value.toLowerCase()}.json`;
-          const folder = await workingJsonFolder();
-          const handle = folder
-            ? await newDataFileHandle(folder, suggestedName)
-            : await window.showSaveFilePicker({
-                suggestedName,
-                types: [
-                  {
-                    description: "JSON",
-                    accept: { "application/json": [".json"] },
-                  },
-                ],
-              });
+          const handle = await window.showSaveFilePicker({
+            suggestedName,
+            types: [
+              {
+                description: "JSON",
+                accept: { "application/json": [".json"] },
+              },
+            ],
+          });
           state.pendingHandle = null;
           if (!(await ensureWritable(handle))) {
             state.pendingHandle = handle;
@@ -6619,7 +6587,7 @@ ${slides
       async function restoreDataFile() {
         if (!window.showOpenFilePicker || !window.showSaveFilePicker) {
           setDataStatus(
-            "This browser cannot create or save data files. Use Microsoft Edge or Chrome.",
+            "This browser cannot create or save data files. Use Microsoft Edge, Chrome or Brave.",
             true,
           );
           $("connectBtn").hidden = true;
