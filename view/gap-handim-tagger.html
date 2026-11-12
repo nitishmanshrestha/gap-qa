@@ -3,7 +3,7 @@
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>GAP Handim | ग्याप हान्दिम</title>
+    <title>Stitch | स्टिच</title>
     <link rel="preconnect" href="https://fonts.googleapis.com" />
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
     <link
@@ -1029,16 +1029,6 @@
         opacity: 0.5;
       }
 
-      .cov-tile.is-active {
-        background: var(--c-bg, var(--surface));
-        transform: translateY(-2px);
-        box-shadow:
-          0 6px 16px -6px
-            color-mix(in srgb, var(--c-solid, var(--border)) 45%, transparent),
-          0 0 0 3px
-            color-mix(in srgb, var(--c-solid, var(--border)) 22%, transparent);
-      }
-
       .cov-tile:focus-visible {
         outline: 2px solid var(--primary);
         outline-offset: 2px;
@@ -1055,6 +1045,25 @@
         box-shadow: none;
         opacity: 0.6;
         color: var(--text-muted);
+      }
+
+      .cov-tile.is-active {
+        opacity: 1;
+        color: var(--c-tx, inherit);
+        background: var(--c-bg, var(--surface));
+        border-style: solid;
+        border-color: var(--c-solid, var(--border));
+        border-left-width: 6px;
+        transform: translateY(-2px);
+        box-shadow:
+          0 8px 18px -8px
+            color-mix(in srgb, var(--c-solid, var(--border)) 60%, transparent),
+          0 0 0 2px
+            color-mix(in srgb, var(--c-solid, var(--border)) 45%, transparent);
+      }
+
+      .cov-tile.is-active .cov-name {
+        font-weight: 600;
       }
 
       .comp-filter {
@@ -1716,6 +1725,12 @@
         transform: translateY(0);
       }
 
+      .sugg-steps {
+        margin: 8px 0 0;
+        padding-left: 20px;
+        color: var(--text-muted);
+      }
+
       .data-status.is-error {
         color: var(--danger);
       }
@@ -2200,15 +2215,16 @@
       <header class="app-header">
         <div class="app-top">
           <div class="app-title">
-            <h1>GAP Handim <span lang="ne">| ग्याप हान्दिम</span></h1>
+            <h1>Stitch <span lang="ne">| स्टिच</span></h1>
             <p>
-              A year-round workspace for us to organize and showcase their
-              achievements for the GAP interview. Each claim tells its story at
-              a glance, naming the competencies it touches, with screenshots,
-              links and metrics for the detailed artifact one click away in its
-              utility belt. Tag every claim to the reasonable competencies it
-              proves, spot the gaps early, and export HTML slides, PDF or
-              Markdown file.
+              Stitch is designed for QAs preparing for GAP. It stitches your
+              artifacts, evidence and metrics together, then gives you a
+              visualizer to present them as one story. Each claim tells its
+              story at a glance, naming the competencies it touches, with
+              screenshots, links and metrics for the detailed artifact one click
+              away in its utility belt. Tag every claim to the reasonable
+              competencies it proves, spot the gaps early, and export HTML
+              slides, PDF or Markdown file.
               <br /><br />Built by a QA, for fellow QAs. <br />All the best!
             </p>
           </div>
@@ -2889,7 +2905,7 @@
       </section>
       <section class="howto" id="howtoView" hidden aria-labelledby="tabHowto">
         <div class="howto-hero">
-          <h2>How to use GAP Handim</h2>
+          <h2>How to use Stitch</h2>
           <p>
             Log each piece of work, tag what it proves, fill the gaps, then
             export.
@@ -2989,9 +3005,9 @@
                   the artifact for the <code>gap-artifact-polisher</code> agent,
                   which suggests competencies from the knowledge base and lists
                   what is missing. The agent writes its replies to
-                  <code>source/suggestions/suggestions.json</code>. GAP Handim
-                  loads that file on its own; the
-                  <strong>Suggestions</strong> tab lists them all.
+                  <code>source/suggestions/suggestions.json</code>. Stitch loads
+                  that file on its own; the <strong>Suggestions</strong> tab
+                  lists them all.
                 </p>
                 <div class="howto-example">
                   <span class="howto-example-label">Example</span>
@@ -3169,6 +3185,15 @@
           <details>
             <summary>"File changed outside the app"</summary>
             <p>It was reloaded. Review and save again.</p>
+          </details>
+          <details>
+            <summary>Suggestions read, but none match the claims</summary>
+            <p>
+              <strong>Why:</strong> The agent's replies were made for claims in
+              another data file, so their claim IDs do not match the open file.
+              <strong>Fix:</strong> Open the data file that holds those claims
+              with Open existing, then click Reload.
+            </p>
           </details>
           <details>
             <summary>Where is my data?</summary>
@@ -3794,7 +3819,7 @@
           <span class="cov-name">${esc(c.name)}</span>
           <span class="cov-meta">
             ${tier === "untiered" ? "" : `<span class="tier tier-${tier}">${tier}</span>`}
-            <span>${count === 0 ? "No evidence yet" : `You have ${count} artifact${count === 1 ? "" : "s"}`}</span>
+            <span>${count === 0 ? "Tag an artifact with this to add evidence" : `You have ${count} artifact${count === 1 ? "" : "s"}`}</span>
           </span>
         </button>`;
           })
@@ -4186,14 +4211,17 @@
           .filter((claim) => claim.agentSuggestion);
         $("suggestionCount").textContent = claims.length;
         const loaded = Object.keys(state.suggestions).length;
-        const emptyText =
-          state.suggestionsHint ||
-          (loaded
+        const emptyText = state.suggestionsHint.startsWith("Could not")
+          ? state.suggestionsHint
+          : loaded
             ? `${loaded} suggestions were read, but none match the claims at this level in the open data file. Open the data file that holds those claims.`
-            : "No AI suggestions yet. The agent writes them to source/suggestions/suggestions.json and they appear here.");
+            : "No AI suggestions yet.";
+        const steps = loaded
+          ? ""
+          : `<ol class="sugg-steps"><li>In Copilot Chat, choose <strong>gap-artifact-polisher</strong> and say <strong>assess my artifacts</strong>.</li><li>The agent saves its replies to <code>source/suggestions/suggestions.json</code>.</li><li>Click <strong>Reload</strong> above to show them here.</li></ol>`;
         $("suggestionList").innerHTML = claims.length
           ? claims.map(renderSuggestionCard).join("")
-          : `<p class="empty">${esc(emptyText)}</p>`;
+          : `<p class="empty">${esc(emptyText)}</p>${steps}`;
       }
 
       function applySuggestionsFile(data) {
@@ -4250,12 +4278,6 @@
             state.suggestionsHint =
               "Click Reload and choose suggestions.json to read the agent's replies.";
             renderSuggestions();
-            showToast(
-              "suggestions.json not found. Click Reload and select the file.",
-              false,
-              false,
-              true,
-            );
             return;
           }
           if ((await handle.queryPermission({ mode: "read" })) !== "granted") {
@@ -4263,12 +4285,13 @@
               state.suggestionsHint =
                 "Click Reload to read the agent's replies from source/suggestions/suggestions.json.";
               renderSuggestions();
-              showToast(
-                "Select suggestions.json with Reload to grant read access.",
-                false,
-                false,
-                true,
-              );
+              if (!$("suggestionsView").hidden)
+                showToast(
+                  "Select suggestions.json with Reload to grant read access.",
+                  false,
+                  false,
+                  true,
+                );
               return;
             }
             if (
@@ -4282,6 +4305,21 @@
           state.suggestionsHint = `Could not load suggestions: ${error.message}`;
           renderSuggestions();
         }
+      }
+
+      // Browsers only show the read prompt after a user action, so ask from the tab click.
+      async function openSuggestions() {
+        try {
+          const handle = await suggestionsFileHandle();
+          if (
+            handle &&
+            (await handle.queryPermission({ mode: "read" })) === "prompt"
+          )
+            await handle.requestPermission({ mode: "read" });
+        } catch {
+          // showView still runs and shows the hint.
+        }
+        showView("suggestions");
       }
 
       function openFormSections() {
@@ -6001,7 +6039,7 @@ ${slides
         );
         begin(infoId);
         push(
-          `<< /Title ${pdfLiteral(`${name || "Candidate"} - ${state.level} promotion evidence`)} /Author ${pdfLiteral(name || "")} /Creator (GAP Handim) >>\nendobj\n`,
+          `<< /Title ${pdfLiteral(`${name || "Candidate"} - ${state.level} promotion evidence`)} /Author ${pdfLiteral(name || "")} /Creator (Stitch) >>\nendobj\n`,
         );
         begin(outlineRootId);
         push(
@@ -6652,7 +6690,11 @@ ${slides
         document
           .querySelectorAll(".tab")
           .forEach((tab) =>
-            tab.addEventListener("click", () => showView(tab.dataset.view)),
+            tab.addEventListener("click", () =>
+              tab.dataset.view === "suggestions"
+                ? openSuggestions()
+                : showView(tab.dataset.view),
+            ),
           );
         $("candidateName").addEventListener("input", onProfileInput);
         $("candidateProject").addEventListener("input", onProfileInput);

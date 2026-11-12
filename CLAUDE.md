@@ -1,4 +1,4 @@
-# GAP Handim: Claude Code instructions
+# Stitch: Claude Code instructions
 
 This file is the Claude Code entry point. The rules live in the Copilot files, so they are imported here rather than copied.
 

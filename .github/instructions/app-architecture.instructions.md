@@ -1,5 +1,5 @@
 ---
-description: Architecture, data model and export rules for the GAP Handim single-file app. Use when editing JavaScript, saving or loading claims, or the HTML slides/markdown export.
+description: Architecture, data model and export rules for the Stitch single-file app. Use when editing JavaScript, saving or loading claims, or the HTML slides/markdown export.
 applyTo: "**/*.html"
 ---
 

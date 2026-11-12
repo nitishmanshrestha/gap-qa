@@ -1,6 +1,6 @@
-# GAP Handim: project rules
+# Stitch: project rules
 
-GAP Handim is a single-file tool (`view/gap-handim-tagger.html`) that helps QAs organize and showcase a year of achievements for the GAP interview. Each claim has an optional claim story, built from the artifact, problem, description and the scenario behind each competency it touches and, in its "utility belt", links, images and metrics for the detailed artifact. Created by Nitish Man Shrestha.
+Stitch brings together all the essentials needed for GAP candidates. It is a single-file tool (`view/gap-handim-tagger.html`) that helps QAs organize and showcase a year of achievements for the GAP interview. Each claim has an optional claim story, built from the artifact, problem, description and the scenario behind each competency it touches and, in its "utility belt", links, images and metrics for the detailed artifact. Created by Nitish Man Shrestha.
 
 ## Sources of truth
 

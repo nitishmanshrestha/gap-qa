@@ -1,4 +1,6 @@
-# GAP Handim
+# Stitch
+
+Stitch is designed for QAs. It brings together all the essentials needed for GAP candidates in one place.
 
 A single-file tool that helps QA engineers organize, tag and export their achievements for a GAP promotion case.
 
